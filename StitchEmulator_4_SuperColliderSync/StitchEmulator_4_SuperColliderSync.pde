@@ -53,39 +53,37 @@ void oscEvent(OscMessage theOscMessage) {
   if (theOscMessage.checkAddrPattern("/stitchSC")==true) {
     //using the direction as a local variable so as not to compute it multiple times
     String direction = theOscMessage.get(0).stringValue();
-
     //check if the message contains relevant characters and send the relevant direction messages
     if ( direction.equals("UP") ) {
-      thread.up();
+      thread.moveChar('e');
     }
-    
+
     if ( direction.equals("DOWN") ) {
-      thread.down();
+      thread.moveChar('c');
     }
-    
+
     if ( direction.equals("LEFT") ) {
-      thread.left();
+      thread.moveChar('s');
     }
-    
+
     if ( direction.equals("RIGHT") ) {
-      thread.right();
+      thread.moveChar('f');
     }
-    
+
     if ( direction.equals("UPLEFT")) {
-      thread.upLeft();
+      thread.moveChar('w');
     }
-    
+
     if ( direction.equals("UPRIGHT")) {
-      thread.upRight();
+      thread.moveChar('r');
     }
-    
+
     if ( direction.equals("DOWNLEFT")) {
-      thread.downLeft();
+      thread.moveChar('x');
     }
-    
+
     if ( direction.equals("DOWNRIGHT")) {
-      thread.downRight();
+      thread.moveChar('v');
     }
-    
   }
 }
