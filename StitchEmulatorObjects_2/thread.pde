@@ -83,9 +83,9 @@ class Thread {                                              // create new class
 
   void moveChar(char c) {    // Declare variable 'c' of type character
     if (c == 'e') {
-      up();
+    up();
   } else if (c == 'c')  {    //  DOWN = 'c'
-      down();
+    down();
   } else if (c == 's')  {    //  LEFT = 's'
     left();
   } else if (c == 'f')  {    //  RIGHT = 'f'
@@ -98,7 +98,7 @@ class Thread {                                              // create new class
     downRight();
   }  else if (c == 'x') {    //  DOWN+LEFT = 'x'
     downLeft();
-    }
+  }
   }
 
                 // draw thread function
