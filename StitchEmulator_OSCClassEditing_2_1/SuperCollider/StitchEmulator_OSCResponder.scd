@@ -43,43 +43,6 @@ OSCdef(\stitchResponder,
 },'/stitch');
 )
 
-//This saves the current iteration and starts a new one
-(
-~stitchHistory.add(List.new);
-"Pattern ".post;
-(~stitchHistory.size.asInt-2).post;
-" Saved!".postln;
-~stitchHistory[~stitchHistory.size-2];
-)
-
-
-//Change the list number to change iterated
-//DOES NOT ADD A NEW SUBLIST!!!
-//There is some margin of error in this ~noHistory thing
-(
-Task({
-	arg listNum = 0;
-	var data = ~stitchHistory[15];
-	~noHistory = 1;
-	//iterate over the data as a local variable
-	data.size.do({
-		|i|
-		~processing.sendMsg('/stitchSC',data[i]);
-		0.01.wait;
-	});
-	~noHistory = 0;
-}).play;
-)
-
-
-
-
-
-
-
-/////////////////////////////////////////OLD IDEAS GO DOWN HERE.
-
-
 //this sends to the local server, just playing sound
 (
 Task({
@@ -111,6 +74,27 @@ Task({
 	});
 	~noHistory = 0;
 	~stitchHistory.add(List.new);
-}).play;
+}).start;
 )
 
+~stitchHistory[2]
+
+
+//Change the list number to change iterated
+//DOES NOT ADD A NEW SUBLIST!!!
+(
+Task({
+	arg listNum = 0;
+	var data = ~stitchHistory[2];
+	~noHistory = 1;
+	//iterate over the data as a local variable
+	data.size-1.do({
+		|i|
+		~processing.sendMsg('/stitchSC',data[i]);
+		0.1.wait;
+	});
+	~noHistory = 0;
+}).start;
+)
+
+~stitchHistory[1]

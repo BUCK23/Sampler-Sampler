@@ -53,7 +53,6 @@ void oscEvent(OscMessage theOscMessage) {
   if (theOscMessage.checkAddrPattern("/stitchSC")==true) {
     //using the direction as a local variable so as not to compute it multiple times
     String direction = theOscMessage.get(0).stringValue();
-
     //check if the message contains relevant characters and send the relevant direction messages
     if ( direction.equals("UP") ) {
       thread.moveChar('e');
