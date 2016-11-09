@@ -16,34 +16,66 @@ class Thread {                                              // create new class
 
   void up()  {          //  UP = 'e'
     move(0, -1);
+    //send relevant OSC message to SuperCollider
+    OscMessage stitchMsg = new OscMessage("/stitch");
+    stitchMsg.add("UP");
+    oscP5.send(stitchMsg,supercollider);
   }
   
   void down()  {        //  DOWN = 'c'
     move(0, 1);
+    //send releant OSC message to SuperCollider
+    OscMessage stitchMsg = new OscMessage("/stitch");
+    stitchMsg.add("DOWN");
+    oscP5.send(stitchMsg,supercollider);
   }
   
   void left()  {        //  LEFT = 's'
     move(-1, 0);
+    //send releant OSC message to SuperCollider
+    OscMessage stitchMsg = new OscMessage("/stitch");
+    stitchMsg.add("LEFT");
+    oscP5.send(stitchMsg,supercollider);
   }
   
   void right()  {       //  RIGHT = 'f'
     move(1, 0);
+        //send releant OSC message to SuperCollider
+    OscMessage stitchMsg = new OscMessage("/stitch");
+    stitchMsg.add("RIGHT");
+    oscP5.send(stitchMsg,supercollider);
   }
   
   void upLeft()  {      //  UP+LEFT = 'w'
     move(-1, -1);
+        //send releant OSC message to SuperCollider
+    OscMessage stitchMsg = new OscMessage("/stitch");
+    stitchMsg.add("UPLEFT");
+    oscP5.send(stitchMsg,supercollider);
   }
   
   void upRight() {      //  UP+RIGHT = 'r'
     move(1, -1);
+        //send releant OSC message to SuperCollider
+    OscMessage stitchMsg = new OscMessage("/stitch");
+    stitchMsg.add("UPRIGHT");
+    oscP5.send(stitchMsg,supercollider);
   }
   
   void downRight()  {   //  DOWN+RIGHT = 'v'
+        //send releant OSC message to SuperCollider
+    OscMessage stitchMsg = new OscMessage("/stitch");
+    stitchMsg.add("DOWNRIGHT");
+    oscP5.send(stitchMsg,supercollider);
     move(1, 1);
   }
   
   void downLeft()  {    //  DOWN+LEFT = 'x'
     move(-1, 1);
+        //send releant OSC message to SuperCollider
+    OscMessage stitchMsg = new OscMessage("/stitch");
+    stitchMsg.add("DOWNLEFT");
+    oscP5.send(stitchMsg,supercollider);
   }
   
 
@@ -51,9 +83,9 @@ class Thread {                                              // create new class
 
   void moveChar(char c) {    // Declare variable 'c' of type character
     if (c == 'e') {
-      up();
+    up();
   } else if (c == 'c')  {    //  DOWN = 'c'
-      down();
+    down();
   } else if (c == 's')  {    //  LEFT = 's'
     left();
   } else if (c == 'f')  {    //  RIGHT = 'f'
@@ -66,7 +98,7 @@ class Thread {                                              // create new class
     downRight();
   }  else if (c == 'x') {    //  DOWN+LEFT = 'x'
     downLeft();
-    }
+  }
   }
 
                 // draw thread function
