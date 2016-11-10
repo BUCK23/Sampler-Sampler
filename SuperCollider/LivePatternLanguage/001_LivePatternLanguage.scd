@@ -1,0 +1,158 @@
+(
+~processing = NetAddr.new("127.0.0.1",12000);
+//initialises a master list (lists are extendable)
+~stitchHistory = List.new;
+//initialises the first sub-list, for the stitches to be added
+~stitchHistory.add(List.new);
+//set value for history to be recorded
+// !! THIS MAY NOT BE NEEDED !!
+~noHistory = 0;
+)
+(
+OSCdef(\stitchResponder,
+	{
+		|msg, time, addr, recvPort, sw, stitch|
+
+
+		var
+		//synthesises different stitching combinations
+		up = {arg f = 440; SinOsc.ar(f,0,0.5)},
+		down = {arg f = 440; SawDPW.ar(f,0,0.5)},
+		left = {arg f = 440, w = 0.5; PulseDPW.ar(f,w,0.5)},
+		right = {arg f = 440, w = 0.5; LFTri.ar(f,0,0.5)},
+		upleft = {arg f = 440, a = 1, b = 3, c = 0.5, d = 0.5; LatoocarfianN.ar(f,a,b,c,d,0.5,0.5,0.5)},
+		upright = {arg f = 440; HenonN.ar(f,mul:0.5)},
+		downleft = {arg f = 440; FBSineN.ar(f,mul:0.5)},
+		downright = {arg f = 440; GbmanN.ar(f,mul:0.5)};
+
+		//computes stitch type so that it doesn't have to be done multiple times
+		stitch = msg[1];
+
+		//switch case to identify the type of stitch that has been pressed
+		sw =  switch (msg[1].postln)
+		{'UP'} {{up.(440)*EnvGen.ar(Env.perc,1,1,0,1,2)}.play}
+		{'DOWN'} {{down.(440)*EnvGen.ar(Env.perc,1,1,0,1,2)}.play}
+		{'LEFT'} {{left.(440)*EnvGen.ar(Env.perc,1,1,0,1,2)}.play}
+		{'RIGHT'} {{right.(440)*EnvGen.ar(Env.perc,1,1,0,1,2)}.play}
+		{'UPLEFT'} {{upleft.(440)*EnvGen.ar(Env.perc,1,1,0,1,2)}.play}
+		{'UPRIGHT'} {{upright.(440)*EnvGen.ar(Env.perc,1,1,0,1,2)}.play}
+		{'DOWNLEFT'} {{downleft.(440)*EnvGen.ar(Env.perc,1,1,0,1,2)}.play}
+		{'DOWNRIGHT'} {{downright.(440)*EnvGen.ar(Env.perc,1,1,0,1,2)}.play};
+
+		//only record history of stitches if a function is not running
+		// !! THIS MAY NOT BE NEEDED !!
+		if (~noHistory == 0 , {~stitchHistory[~stitchHistory.size-1].add(stitch)});
+
+},'/stitch');
+)
+
+
+//This saves the current iteration and starts a new one
+(
+~savePattern = {
+	~stitchHistory.add(List.new);
+	"Pattern ".post;
+	(~stitchHistory.size.asInt-2).post;
+	" Saved!".postln;
+	~stitchHistory[~stitchHistory.size-2];
+};
+
+
+//this clears the current iteration
+~clearPattern = {
+	"Current pattern cleared! ".post;
+	~stitchHistory[~stitchHistory.size-1].clear;
+};
+
+//plays pattern according to specified saved pattern and relevant time delay
+~playPattern = {
+	arg pattern = 0, period = 0.1;
+	Task({
+		arg listNum = 0;
+		var data = ~stitchHistory[pattern];
+		~noHistory = 1;
+		//iterate over the data as a local variable
+		data.size.do({
+			|i|
+			~processing.sendMsg('/stitchSC',data[i]);
+			period.wait;
+		});
+		~noHistory = 0;
+	}).play;
+};
+
+//clears Processing screen
+~clearScreen = {~processing.sendMsg('/stitchSC',"CLEAR"); "Screen Cleared!"};
+
+//Loops the pattern, with a relevant wait period in place
+~loopPattern = {
+	arg pattern = 0, period = 0.1, num = 4, delay = 0.1, modifier = "NONE", modifier2 = "NONE", modifier3 = "NONE", modifier4 = "NONE";
+	Task({
+		num.do({~playPattern.(pattern,period);
+			((~stitchHistory[pattern].size)*period).wait;
+			~processing.sendMsg('/stitchSC',modifier,modifier2,modifier3,modifier4);
+			delay.wait;
+		})
+	}).play;
+}
+)
+
+
+
+~clearScreen.()
+~clearPattern.()
+~savePattern.()
+~loopPattern.(2,0.1,20,0.1,"UP")
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////OLD DATA////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+
+//Change the list number to change iterated
+//DOES NOT ADD A NEW SUBLIST!!!
+//There is some margin of error in this ~noHistory thing
+(
+Task({
+	arg listNum = 0;
+	var data = ~stitchHistory[3];
+	~noHistory = 1;
+	//iterate over the data as a local variable
+	data.size.do({
+		|i|
+		~processing.sendMsg('/stitchSC',data[i]);
+		rrand(0.001,0.005).wait;
+	});
+	~noHistory = 0;
+}).play;
+)
+
+//CLEARS SCREEN
+~processing.sendMsg('/stitchSC',"CLEAR")
+
+
+~loopPattern = {
+	loop: arg num = 4, delay = 0.1, pattern = 0, period = 0.1, modifier = "NONE", modifier2 = "NONE", modifier3 = "NONE", modifier4 = "NONE";
+	Task({
+		num.do({~playPattern.(pattern,period);
+			((~stitchHistory[pattern].size)*period).wait;
+			~processing.sendMsg('/stitchSC',modifier,modifier2,modifier3,modifier4);
+			delay.wait;
+		})
+	}).play;
+	loopRev: arg num = 4, delay = 0.1, pattern = 0, period = 0.1, modifier = "NONE", modifier2 = "NONE", modifier3 = "NONE", modifier4 = "NONE";
+	Task({
+		num.do({~playPattern.(pattern,period);
+			((~stitchHistory[pattern].size)*period).wait;
+			~processing.sendMsg('/stitchSC',modifier,modifier2,modifier3,modifier4);
+			delay.wait;
+		})
+	}).play;
+
+}
+

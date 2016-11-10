@@ -64,7 +64,7 @@ OSCdef(\stitchResponder,
 (
 Task({
 	arg listNum = 0;
-	var data = ~stitchHistory[3];
+	var data = ~stitchHistory[1];
 	~noHistory = 1;
 	//iterate over the data as a local variable
 	data.size.do({
@@ -76,7 +76,7 @@ Task({
 }).play;
 )
 
-//CLEARS SCREEN
+
 ~processing.sendMsg('/stitchSC',"CLEAR")
 
 

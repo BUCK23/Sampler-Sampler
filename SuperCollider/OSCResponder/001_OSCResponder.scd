@@ -1,3 +1,13 @@
+/*
+
+This script is the basis for interacting with the StitchEmulator processing script
+
+This will be developed into a 'live coding language'
+
+*/
+
+
+
 (
 ~processing = NetAddr.new("127.0.0.1",12000);
 //initialises a master list (lists are extendable)

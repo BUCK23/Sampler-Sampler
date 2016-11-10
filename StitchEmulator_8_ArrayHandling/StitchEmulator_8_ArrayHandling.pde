@@ -6,7 +6,7 @@ NetAddress supercollider;
 
 Thread thread = new Thread();
 
-int grid = 32;
+int grid = 10;
 
 void setup() {
 
@@ -76,16 +76,25 @@ void mousePressed() {
 }
 
 //handler for OSC messages. will be used to recieve stitching information from SuperCollider
+//it would be nice if this could take an array to do more complex modifiers
 void oscEvent(OscMessage theOscMessage) {
   //checks if the message is being recieved from SuperCollider using the address
   if (theOscMessage.checkAddrPattern("/stitchSC")==true) {
+    
+    //make an arrayList to hold the instructions to be sent to the stitch emulator
+    ArrayList<String> instructions = new ArrayList<String>();
+    String direction = "";
+    
+    //Handler for STRINGS
+    //if the typetag is a string, add the information to the first index of the arrayList
+    if (theOscMessage.typetag().equals("s")) {
     //using the direction as a local variable so as not to compute it multiple times
-    String direction = theOscMessage.get(0).stringValue();
+    instructions.add(theOscMessage.get(0).stringValue());
     //check if the message contains relevant characters and send the relevant direction messages
+    direction = instructions.get(0);
     if ( direction.equals("UP") ) {
       thread.up(1);
     }
-
     if ( direction.equals("DOWN") ) {
       thread.down(1);
     }
@@ -116,5 +125,15 @@ void oscEvent(OscMessage theOscMessage) {
     if ( direction.equals("CLEAR")) {
       clearScreen();
     }
+   
+    
+    
+    }
+    
+    ////MAKE A HANDLER FOR ARRAYS
+     if (theOscMessage.typetag().equals("b")) {
+      print(theOscMessage.get(0));
+    }
+    
   }
 }
