@@ -10,7 +10,7 @@ int grid = 32;
 
 void setup() {
 
-  frameRate(5);
+  //frameRate(5);
   size(1000, 1000);
 
   //start relevant OSC goodies
@@ -37,8 +37,18 @@ void setup() {
 
 // draw method
 void draw() {
+  background(255);
 
   scale(grid);       // set thread scale
+
+  //draw grid because reasons
+  for (int i = 0; i <= width/grid; i ++) {
+    for (int j = 0; j <= height/grid; j ++) {
+      noStroke();
+      fill(150);
+      ellipse(i, j, 0.1, 0.1);
+    }
+  }
 
   thread.draw();
 }
@@ -46,6 +56,23 @@ void draw() {
 // key press event
 void keyPressed(KeyEvent e) {
   thread.moveChar(key, e);
+}
+
+void clearScreen() {
+  synchronized(thread.stitches) {
+    thread.stitches.clear();
+    for (int i = 0; i <= width/grid; i ++) {
+      for (int j = 0; j <= height/grid; j ++) {
+        noStroke();
+        fill(150);
+        ellipse(i, j, 0.1, 0.1);
+      }
+    }
+  }
+}
+
+void mousePressed() {
+  clearScreen();
 }
 
 //handler for OSC messages. will be used to recieve stitching information from SuperCollider
@@ -85,6 +112,9 @@ void oscEvent(OscMessage theOscMessage) {
 
     if ( direction.equals("DOWNRIGHT")) {
       thread.downRight(1);
+    }
+    if ( direction.equals("CLEAR")) {
+      clearScreen();
     }
   }
 }

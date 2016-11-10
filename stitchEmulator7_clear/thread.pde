@@ -253,13 +253,6 @@ class Thread {                                              // create new class
         y = newY;                                // makes stitch end start point x for next stitch
         up = ! up;// makes boolean up opposite for next stitch
       }
-      //if (x > grid || x < 0 ) {
-      //  x = 0;
-      //}
-      //if (y > grid || y < 0) {
-      //  stitches.y = 0;
-      //} 
-      //println(x+":"+y);
     }
   }
 }
