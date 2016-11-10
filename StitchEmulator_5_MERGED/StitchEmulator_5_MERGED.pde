@@ -6,7 +6,7 @@ NetAddress supercollider;
 
 Thread thread = new Thread();
 
-int grid = 32;
+int grid = 12;
 
 void setup() {
 
@@ -43,8 +43,8 @@ void draw() {
 }
 
 // key press event
-void keyPressed() {
-  thread.moveChar(key);
+void keyPressed(KeyEvent e) {
+  thread.moveChar(key, e);
 }
 
 //handler for OSC messages. will be used to recieve stitching information from SuperCollider
@@ -55,35 +55,35 @@ void oscEvent(OscMessage theOscMessage) {
     String direction = theOscMessage.get(0).stringValue();
     //check if the message contains relevant characters and send the relevant direction messages
     if ( direction.equals("UP") ) {
-      thread.moveChar('e');
+      thread.up(1);
     }
 
     if ( direction.equals("DOWN") ) {
-      thread.moveChar('c');
+      thread.down(1);
     }
 
     if ( direction.equals("LEFT") ) {
-      thread.moveChar('s');
+      thread.left(1);
     }
 
     if ( direction.equals("RIGHT") ) {
-      thread.moveChar('f');
+      thread.right(1);
     }
 
     if ( direction.equals("UPLEFT")) {
-      thread.moveChar('w');
+      thread.upLeft(1);
     }
 
     if ( direction.equals("UPRIGHT")) {
-      thread.moveChar('r');
+      thread.upRight(1);
     }
 
     if ( direction.equals("DOWNLEFT")) {
-      thread.moveChar('x');
+      thread.downLeft(1);
     }
 
     if ( direction.equals("DOWNRIGHT")) {
-      thread.moveChar('v');
+      thread.downRight(1);
     }
   }
 }
