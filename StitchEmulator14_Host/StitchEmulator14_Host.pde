@@ -11,8 +11,9 @@ int grid = 32;
 void setup() {
 
   frameRate(30);
-  size(1000, 1000);
-
+  //size(1000, 1000);
+  fullScreen();
+  
   //start relevant OSC goodies
   //starting reciever on port 12000
   oscP5 = new OscP5(this, 12000);
@@ -98,6 +99,9 @@ void clearScreenSC(int scaler) {
 
 void mousePressed() {
   clearScreen(grid);
+  OscMessage stitchMsg = new OscMessage("/hostClearArray");
+  stitchMsg.add("CLEARING CURRENT PATTERN");
+  oscP5.send(stitchMsg, supercollider);
 }
 
 //handler for OSC messages. will be used to recieve stitching information from SuperCollider
