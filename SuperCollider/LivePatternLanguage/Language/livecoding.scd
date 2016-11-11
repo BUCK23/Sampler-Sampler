@@ -29,7 +29,7 @@ Tdef(\stitching,{ loop ({ ~loopPattern.([2,3].choose,0.0001,4,0.1,modifier1:~dir
 Tdef(\stitching).play
 
 
-~clearScreen.(204)
+~clearScreen.(20)
 
 StageLimiter.activate
 

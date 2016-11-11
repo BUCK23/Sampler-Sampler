@@ -46,7 +46,7 @@
 
 //function to send commands to OSCResponder
 ~sampleResponder = {
-	arg freq = 440, amp = 0.1, atk = 0.01, rel = 0.1, pan = 0;
+	arg freq = 400, amp = 0.1, atk = 0.01, rel = 0.1, pan = 0;
 	OSCdef(\stitchResponderSampler,
 		{
 			|msg, time, addr, recvPort, sw, stitch|
@@ -96,7 +96,7 @@
 
 //new keyboardResponder using sine waves
 ~keyboardResponder = {
-	arg freq = 100, amp = 0.5, atk = 0.4, rel = 1, pan = 0;
+	arg freq = 100, amp = 0.1, atk = 0.4, rel = 1, pan = 0;
 	OSCdef(\stitchResponderKeyboard,
 		{
 			|msg, time, addr, recvPort, sw, stitch|
@@ -147,6 +147,13 @@
 		},\screenCleared
 	);
 };
+
+
+OSCdef(\hostSavePattern,
+	{
+		~savePattern.();
+	}, '/hostSave'
+);
 
 )
 
