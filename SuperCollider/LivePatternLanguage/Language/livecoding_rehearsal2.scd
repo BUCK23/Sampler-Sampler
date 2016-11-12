@@ -20,7 +20,7 @@ clearSet
 
 (
 ~keyboardResponder.();
-~sampleResponder.(envMul:0.1);
+~sampleResponder.(envMul:1.5);
 )
 
 StageLimiter.activate
@@ -29,7 +29,7 @@ StageLimiter.activate
 
 Tdef(\stitch,{ ~clearScreen.(); loop({ ~loopPattern.([3].choose,rrand(0.01,0.2),modifier1:"LEFT"); ~sampleResponder.([500,400,600,700,900,8000,7000].choose,0.1,0.01,0.02); })})
 
-Tdef(\stitch, {loop ({~loopPattern.([6].choose,0.1)})});
+Tdef(\stitch, {loop ({~loopPattern.([0,1].choose,[0.01,0.1].choose,modifier1:~dirLong.choose)})});
 
 ~clearScreen.(20)
 
@@ -48,7 +48,7 @@ OSCFunc.trace
 ~clearPattern.()
 ~clearScreen.(40)
 
-
+NetAddr.langPort
 
 
 OSCFunc.trace
