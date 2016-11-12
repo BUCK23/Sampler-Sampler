@@ -1,4 +1,4 @@
-("language_0.3.scd").loadRelative
+("language_0.4.scd").loadRelative
 
 /*
 
@@ -20,7 +20,7 @@ clearSet
 
 (
 ~keyboardResponder.();
-~sampleResponder.();
+~sampleResponder.(envMul:0.1);
 )
 
 StageLimiter.activate
@@ -29,9 +29,19 @@ StageLimiter.activate
 
 Tdef(\stitch,{ ~clearScreen.(); loop({ ~loopPattern.([3].choose,rrand(0.01,0.2),modifier1:"LEFT"); ~sampleResponder.([500,400,600,700,900,8000,7000].choose,0.1,0.01,0.02); })})
 
+Tdef(\stitch, {loop ({~loopPattern.([6].choose,0.1)})});
+
+~clearScreen.(20)
+
+Tdef(\stitch).play
+
 Tdef(\stitch).stop
 
+
+
 ~savePattern.()
+
+OSCFunc.trace
 
 ~stitchHistory[1]
 
