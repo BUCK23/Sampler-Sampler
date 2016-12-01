@@ -1,4 +1,6 @@
-("language_0.4.scd").loadRelative
+// This file is the only file needed to operate the live coding language, with the relevant functions that comprise the language being loaded in the .loadRelative below
+
+("Language/language_0.4.scd").loadRelative
 
 /*
 
