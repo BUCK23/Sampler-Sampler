@@ -392,7 +392,7 @@ class Thread {                                              // create new class
         for (Stitch stitch : stitches) {           // for loop - for (init; test; update) - calling from stitch array
           newX = x + stitch.x;                // decaler var newX (line endpoint) x pos + values from move function (see stitch object arguments)
           newY = y + stitch.y;                // decaler var newY (line endpoint) y pos + values from move function (see stitch object arguments)
-          stroke(up ? color(0, 250) : color(200, 80));     // set stroke colour depending on boolean up true/false
+          stroke(up ? color(0, 250) : color(150, 100));     // set stroke colour depending on boolean up true/false
           // result = test ? expression1 : expression2
           // is equivalent to this structure: 
           /*  if (test) {

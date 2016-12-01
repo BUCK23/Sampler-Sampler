@@ -20,7 +20,7 @@
 
 //this clears the current iteration
 ~clearPattern = {
-	"Current pattern cleared! ".post;
+	"Current pattern cleared! ".postln;
 	~stitchHistory[~stitchHistory.size-1].clear;
 };
 

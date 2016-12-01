@@ -11,8 +11,8 @@ int grid = 32;
 void setup() {
 
   frameRate(30);
-  size(1000, 1000);
-
+  //size(1000, 1000);
+fullScreen();
   //start relevant OSC goodies
   //starting reciever on port 12000
   oscP5 = new OscP5(this, 12000);
