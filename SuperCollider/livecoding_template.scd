@@ -1,29 +1,23 @@
 // This file is the only file needed to operate the live coding language, with the relevant functions that comprise the language being loaded in the .loadRelative below
 
-("Language/language_0.4.scd").loadRelative
-
-/*
-
-Language Parameters
-
-~dir = single step directions
-~dirLong = dual-step directions
-~clearScreen.(scaling)
-~randDir.()
-~randDirLong.()
-
-
-*/
-
-
-//DON'T FORGET TO RECORD!!!!
-
+//Load microlanguage, note: only do this at the START of your session
 (
-~keyboardResponder.(amp:0.1, pan:0.8, envMul:3);
-~sampleResponder.(amp: 0.1, pan:-0.8,envMul:1.5);
+("../Language/language_0.4.scd").loadRelative;
+~keyboardResponder.();
+~sampleResponder.();
+~hostPatternControl.();
+//OPTIONAL: StageLimiter, depends on BatLib Quark
+//StageLimiter.activate
+)
+
+//if you hard stop SCLang, run this block to get functionality back, or you will lose stored patterns.
+(
+~keyboardResponder.();
+~sampleResponder.();
 ~hostPatternControl.();
 )
 
+//Task Definition to build stitches,  see examples/documentation for how to use
 (
 Tdef(\stitch,
 	{ loop ({
@@ -43,10 +37,11 @@ Tdef(\stitch,
 			amp:0.1,
 			atk:0.01,
 			rel:0.01,
-			pan:-0.8,
+			pan:0,
 			envMul:2
 		);
 	})}
 )
 )
 
+Tdef(\stitch).play;
