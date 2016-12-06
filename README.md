@@ -45,6 +45,8 @@ To build the specific hardware involved in the project (not essential):
 2. Load the livecoding_template.scd file from the SuperCollider folder and follow the instructions to load the microlanguage and sonification code. The microlanguage works by wrapping functions inside of a [Tdef](http://doc.sccode.org/Classes/Tdef.html), so knowing a little about how Tdefs work alongside the documentation of the functions will probably be of some use.
 3. Draw some patterns using the Processing sketch, and send them to SuperCollider using the A key (then clear your screen). This should show in your SuperCollider window as having created Pattern 0. This pattern can then be sequenced using the language
 
-### Examples
+### Examples and Documentation
 
-TODO
+TODO: The Processing sketch contains information on how to use it in the sketch itsef
+
+Examples for the SuperCollider Microlanguage are located inside the SuperCollider/Documentation folder
