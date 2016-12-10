@@ -1,3 +1,51 @@
+/*
+Sampler-Sampler 1.0
+
+Blackwok Stitching Emulator - processing sketch
+
+See the README.md file of the master directory for more detailed information about the project
+
+SETUP:
+
+If this sketch is running in Client mode, make sure the line
+
+supercollider = new NetAddress("127.0.0.1", 57120)
+
+contains the correct localhost IP address. 57120 is SClang's default OSC communication port and this should be left alone unless you have specifically changed the NetAddr.langport in SuperCollider.
+
+
+If this sketch is runnning in Host mode, make that the line
+
+supercollider = new NetAddress("192.168.1.2",57120)
+
+contains the correct IP of the machine sending stitches remotely.
+
+HOW TO USE:
+
+When the sketch is started, keyboard keys are used to create blackwork stitches on the processing window. The keys used for movement are in a circle:
+
+e = UP
+c = DOWN
+f = RIGHT
+s = LEFT
+w = UPLEFT
+r = UPRIGHT
+v = DOWNRIGHT
+x = DOWNLEFT
+
+There are also two modifier keys that can be used for creating alternate stitching patterns:
+
+ALT + direction key = draw a long stitch, where a stitch will remain on the same 'side' of the canvas for a double distance
+
+SHIFT + direction key = draw squares (UP, DOWN, LEFT, RIGHT) and crosses (UPLEFT, UPRIGHT, DOWNLEFT, DOWNRIGHT) in one button press. This speeds up the creation of patterns that may contain multiple complex units.
+
+SONIFICATION & SAMPLING:
+
+Note that this processing sketch is one half of Sampler-Sampler, which is designed to be run in tandem with the SuperCollider live coding microlanguage also in this repo. Please see the SuperCollider folder for instructions on how to use this.
+*/
+
+
+
 //import relevant OSC goodies
 import oscP5.*;
 import netP5.*;

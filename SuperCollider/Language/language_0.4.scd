@@ -78,7 +78,7 @@
 			{'UPRIGHT'} {{Pan2.ar(upright.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
 			{'DOWNLEFT'} {{Pan2.ar(downleft.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
 			{'DOWNRIGHT'} {{Pan2.ar(downright.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			//TODO: simplify the way in which these responders function, possibly changing the multiplier option in the function arguments to something more productive
+			//TODO: For next version, simplify the way in which these responders function, possibly changing the multiplier option in the function arguments to something more productive
 			{'UPLONG'} {{Pan2.ar(up.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
 			{'DOWNLONG'} {{Pan2.ar(down.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
 			{'LEFTLONG'} {{Pan2.ar(left.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
@@ -138,7 +138,7 @@
 			{'UPRIGHT'} {{Pan2.ar(upright.(freq*6,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
 			{'DOWNLEFT'} {{Pan2.ar(downleft.(freq*7,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
 			{'DOWNRIGHT'} {{Pan2.ar(downright.(freq*8,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			//TODO: simplify the way in which these responders function, possibly changing the multiplier option in the function arguments to something more productive
+			//TODO: for next version - simplify the way in which these responders function, possibly changing the multiplier option in the function arguments to something more productive
 			{'UPLONG'} {{Pan2.ar(up.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
 			{'DOWNLONG'} {{Pan2.ar(down.(freq*2,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
 			{'LEFTLONG'} {{Pan2.ar(left.(freq*3,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
@@ -172,7 +172,6 @@
 };
 
 
-//TODO: wrap these in a function so that they're not lost when i hard stop
 OSCdef(\hostSavePattern,
 	{
 		~savePattern.();
