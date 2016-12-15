@@ -7,6 +7,8 @@ _**sampler [NOUN]**
 1: A piece of embroidery worked in various stitches as a specimen of skill, typically containing the alphabet and some mottoes.
 2: An electronic device for sampling music and sound._
 
+![alt tag](../1.0/images/demo.gif)
+
 ## Environment
 
 Sampler/Sampler 1.0 consists of:
