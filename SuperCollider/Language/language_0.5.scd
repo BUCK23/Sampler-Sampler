@@ -30,18 +30,20 @@
 	Task({
 		arg listNum = 0;
 		var data;
-		if (reverse == 1, { data = ~stitchHistory[pattern].reverse;},
-			{data = ~stitchHistory[pattern]});
-		~noHistory = 1;
+		data = ~stitchHistory[pattern];
 		//iterate over the data as a local variable
 		data.size.do({
 			|i|
-			~processing.sendMsg('/stitchSC',data[i]);
+			//adjusted to send two values to Processing - I think, the first 0 just queries the list.
+			~processing.sendMsg('/stitchSC',data[i][0],data[i][1]);
+			data[i].postln;
 			period.wait;
 		});
 		~noHistory = 0;
 	}).play;
 };
+
+~stitchHistory[1].size
 
 //clears Processing screen, int specifies grid size
 ~clearScreen = {arg size = 10; ~processing.sendMsg('/stitchSC',"CLEAR", size); "Screen Cleared!"};

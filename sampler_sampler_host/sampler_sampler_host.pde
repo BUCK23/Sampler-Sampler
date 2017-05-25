@@ -163,10 +163,11 @@ void mousePressed() {
 void oscEvent(OscMessage theOscMessage) {
   //checks if the message is being recieved from SuperCollider using the address
   if (theOscMessage.checkAddrPattern("/stitchSC")==true) {
+    
+   
 
     //make an arrayList to hold the instructions to be sent to the stitch emulator
     ArrayList<String> instructions =   new ArrayList<String>();
-    String direction = "";
 
     //Handler for STRINGS
     //if the typetag is a string, add the information to the first index of the arrayList
@@ -175,15 +176,137 @@ void oscEvent(OscMessage theOscMessage) {
 
 
     //I NEED TO MAKE THIS SO THAT IT DOES NOT PASS SI AS ARGUMENT BECAUSE IT BREAKS
-    if (theOscMessage.typetag().contains("s") && theOscMessage.typetag().contains("i") == false) {
+    if (theOscMessage.typetag().contains("ii") == true) {
+      
+      int[] direction = new int[2];
+      //print("yay");
+      
+      //Direct assignment - inflexible
+      //direction[0] = theOscMessage.get(0).intValue();
+      //direction[1] = theOscMessage.get(1).intValue();
+      
+      //generate array containing direction and any modifiers based on the send OSC message
       for (int i = 0; i < theOscMessage.typetag().length(); i++) {
-        /*
-    //THIS MAY NOT BE NEEDED
-         //using the direction as a local variable so as not to compute it multiple times
+        direction[i] = theOscMessage.get(i).intValue();
+      }
+      
+       //up
+       if( direction[0] == 0 ) {
+         if( direction[1] == 0){
+           //up 
+           thread.up(1, 1);
+         } else if ( direction [1] == 1 ){
+           //uplong
+           thread.up(2, 1);
+         }
+        }
+        
+        //upright
+        if( direction[0] == 1 ) {
+         if( direction[1] == 0){
+           //up 
+           thread.upRight(1, 1);
+         } else if ( direction [1] == 1 ){
+           //uplong
+           thread.upRight(2, 1);
+         }
+        }
+        
+        //right
+        
+         if( direction[0] == 2 ) {
+         if( direction[1] == 0){
+           //up 
+           thread.right(1, 1);
+         } else if ( direction [1] == 1 ){
+           //uplong
+           thread.right(2, 1);
+         }
+        }
+        
+        
+        //downright
+        
+         if( direction[0] == 3 ) {
+         if( direction[1] == 0){
+           //up 
+           thread.downRight(1, 1);
+         } else if ( direction [1] == 1 ){
+           //uplong
+           thread.downRight(2, 1);
+         }
+        }
+        
+        
+        //down
+        
+         if( direction[0] == 4 ) {
+         if( direction[1] == 0){
+           //up 
+           thread.down(1, 1);
+         } else if ( direction [1] == 1 ){
+           //uplong
+           thread.down(2, 1);
+         }
+        }
+        
+        
+        //downleft
+        
+         if( direction[0] == 5 ) {
+         if( direction[1] == 0){
+           //up 
+           thread.downLeft(1, 1);
+         } else if ( direction [1] == 1 ){
+           //uplong
+           thread.downLeft(2, 1);
+         }
+        }
+        
+        
+        //left
+        
+                if( direction[0] == 6 ) {
+         if( direction[1] == 0){
+           //up 
+           thread.left(1, 1);
+         } else if ( direction [1] == 1 ){
+           //uplong
+           thread.left(2, 1);
+         }
+        }
+        
+        
+        //upleft
+
+        if( direction[0] == 7 ) {
+         if( direction[1] == 0){
+           //up 
+           thread.upLeft(1, 1);
+         } else if ( direction [1] == 1 ){
+           //uplong
+           thread.upLeft(2, 1);
+         }
+        }
+        
+
+
+
+
+      
+      //println(str(direction));
+      
+    }
+      
+      
+      //old string detecting code
+      /*
+      for (int i = 0; i < theOscMessage.typetag().length(); i++) {
+        
+        //using the direction as a local variable so as not to compute it multiple times
          instructions.add(theOscMessage.get(i).stringValue());
          //check if the message contains relevant characters and send the relevant direction messages
          direction = instructions.get(i);
-         */
 
         direction = theOscMessage.get(i).stringValue();
 
@@ -250,7 +373,9 @@ void oscEvent(OscMessage theOscMessage) {
         }
       }
     }
-
+    
+    */
+    
     if (theOscMessage.typetag().contains("si")) {
       if (theOscMessage.get(0).stringValue().equals("CLEAR")) {
         int size = theOscMessage.get(1).intValue();

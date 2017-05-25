@@ -45,3 +45,5 @@ Tdef(\stitch,
 )
 
 Tdef(\stitch).play;
+
+OSCFunc.tracefer
