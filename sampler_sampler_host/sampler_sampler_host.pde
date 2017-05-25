@@ -7,18 +7,12 @@ See the README.md file of the master directory for more detailed information abo
 
 SETUP:
 
-If this sketch is running in Client mode, make sure the line
+Switch between 'client' and 'host' mode using the variables before setup:
+mode = "client"
+or
+mode = "host"
 
-supercollider = new NetAddress("127.0.0.1", 57120)
-
-contains the correct localhost IP address. 57120 is SClang's default OSC communication port and this should be left alone unless you have specifically changed the NetAddr.langport in SuperCollider.
-
-
-If this sketch is runnning in Host mode, make that the line
-
-supercollider = new NetAddress("192.168.1.2",57120)
-
-contains the correct IP of the machine sending stitches remotely.
+The IP address of the host can be changed by changing the hostIP variable
 
 HOW TO USE:
 
@@ -52,7 +46,16 @@ import netP5.*;
 OscP5 oscP5;
 NetAddress supercollider;
 
+//choose betweeen "client" or "host" here
+String mode = "client";
+
 Thread thread = new Thread();
+
+String hostIP = "192.168.1.2";
+int hostPort = 57120;
+
+String clientIP = "127.0.0.1";
+int clientPort = 57120;
 
 int grid = 32;
 
@@ -65,7 +68,11 @@ void setup() {
   //starting reciever on port 12000
   oscP5 = new OscP5(this, 12000);
   //starting sender to sclang's default port
-  supercollider = new NetAddress("192.168.1.2", 57120);
+  if (mode == "client"){
+  supercollider = new NetAddress(clientIP, clientPort);
+  } else if (mode == "host"){
+  supercollider = new NetAddress(hostIP, hostPort);  
+  }
 
   // draw plain background
   background(255);
@@ -158,7 +165,7 @@ void oscEvent(OscMessage theOscMessage) {
   if (theOscMessage.checkAddrPattern("/stitchSC")==true) {
 
     //make an arrayList to hold the instructions to be sent to the stitch emulator
-    ArrayList<String> instructions = new ArrayList<String>();
+    ArrayList<String> instructions =   new ArrayList<String>();
     String direction = "";
 
     //Handler for STRINGS

@@ -21,6 +21,8 @@ class Thread {                                              // create new class
   // thread dirction method
   // first input controls the movement speed, second input controls the type of OSCMessage sent to SuperCollider (Keyboard vs Sequenced input)
   // if movement is 1, send normal string, if movement is 2, send a string to dictate a longer movement. This handles 'ALT' presses
+  
+  // These directions are now integers. 0-7 with a second entry of 0 is normal directions, and a second entry of 1 is a long direction
   void up(int n, int inputType) {          //  UP = 'e'
     synchronized(stitches) {
       move(0, 0-n);
@@ -28,11 +30,13 @@ class Thread {                                              // create new class
         if (inputType == 0) {
           //send relevant OSC message to SuperCollider
           OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-          stitchMsg.add("UP");
+          stitchMsg.add(0);
+          stitchMsg.add(0);
           oscP5.send(stitchMsg, supercollider);
         } else if (inputType == 1) {
           OscMessage stitchMsg = new OscMessage("/stitchSampler");
-          stitchMsg.add("UP");
+          stitchMsg.add(0);
+          stitchMsg.add(0);
           oscP5.send(stitchMsg, supercollider);
         }
         //send message for long stitches
@@ -40,11 +44,13 @@ class Thread {                                              // create new class
         if (inputType == 0) {
           //send relevant OSC message to SuperCollider
           OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-          stitchMsg.add("UPLONG");
+          stitchMsg.add(0);
+          stitchMsg.add(1);
           oscP5.send(stitchMsg, supercollider);
         } else if (inputType == 1) {
           OscMessage stitchMsg = new OscMessage("/stitchSampler");
-          stitchMsg.add("UPLONG");
+          stitchMsg.add(0);
+          stitchMsg.add(1);
           oscP5.send(stitchMsg, supercollider);
         }
       }
@@ -80,7 +86,7 @@ class Thread {                                              // create new class
     }
   }
 
-  void left(int n, int inputType) {        //  LEFT = 's'        // NOT GOING LEFT??
+  void left(int n, int inputType) {        //  LEFT = 's'
     synchronized(stitches) {
       move(0-n, 0);
       if (n == 1) {
