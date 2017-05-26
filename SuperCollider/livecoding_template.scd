@@ -2,7 +2,7 @@
 
 //Load microlanguage, note: only do this at the START of your session
 (
-("Language/language_0.4.scd").loadRelative;
+("Language/language_0.5_Experimental.scd").loadRelative;
 ~keyboardResponder.();
 ~sampleResponder.();
 ~hostPatternControl.();
@@ -30,7 +30,6 @@ Tdef(\stitch,
 			modifier2:"NONE",
 			modifier3:"NONE",
 			modifier4:"NONE",
-			reverse:0,
 		);
 		~sampleResponder.(
 			freq:400,
@@ -45,5 +44,38 @@ Tdef(\stitch,
 )
 
 Tdef(\stitch).play;
+
+//scratchpad goes here:
+
+
+(
+Tdef(\stitch,
+	{ loop ({
+		~loopPattern.(
+			pattern:0,
+			period:0.01,
+			num:1,
+			delay:0.01,
+			transform:[0,0,0,0,0,0,0,0,0,0,0,1,-1,-6].choose,
+			modifier1:"NONE",
+			modifier2:"NONE",
+			modifier3:"NONE",
+			modifier4:"NONE",
+		);
+		~sampleResponder.(
+			freq:rrand(100,401),
+			amp:0.1,
+			atk:0.01,
+			rel:0.5,
+			pan:rrand(-1,1),
+			envMul:2
+		);
+	})}
+)
+)
+
+Tdef(\stitch).play
+
+~clearScreen.(20)
 
 OSCFunc.tracefer

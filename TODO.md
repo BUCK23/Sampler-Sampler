@@ -31,3 +31,16 @@ The issue is with Long directions, is the best thing to do to use another modifi
 
 
 - eliminate the need for two processing files - this has been done using the `mode` variable in the initialisation part of the processing sketch - DONE
+
+- Add some interesting transformations to the SuperCollider side - mathematical transformations are now possible. - DONE
+    - 'transform' added
+    - 'multiplier' added
+
+- Change the pattern logic from a Tdef to a Pbind
+    - Is this possible? Yes. A Pfunc can contain the `~loopPattern` function, so it should also be able to iterate through these patterns.
+    - This would solve a lot of issues around the scheduling of patterns, and would allow for the setting of pattern playback by using Pbind's built in `dur` values
+    - Any possible problems? 
+        - It would be a hack but that's not necessarily the worst thing in the world
+        - Would require re-writing of the functions that control pattern playback
+
+- Make the sonification better

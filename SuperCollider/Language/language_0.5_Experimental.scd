@@ -25,8 +25,9 @@
 };
 
 //plays pattern according to specified saved pattern and relevant time delay
+// TODO: fix what 'long' does, figure out a good way to handle it - probably with strings
 ~playPattern = {
-	arg pattern = 0, period = 0.1, modifier = 0;
+	arg pattern = 0, period = 0.1, modifier = 0, multiplier = 1, long = 0;
 	Task({
 		arg listNum = 0;
 		var data;
@@ -36,7 +37,7 @@
 			|i|
 			//adjusted to send two values to Processing - I think, the first 0 just queries the list.
 			//Modifier in brackets to allow a negative number to be used on patterns
-			~processing.sendMsg('/stitchSC',data[i][0]+(modifier),data[i][1]);
+			~processing.sendMsg('/stitchSC',((data[i][0]+(modifier))*multiplier)%7,data[i][1]);
 			data[i].postln;
 			period.wait;
 		});
@@ -47,14 +48,19 @@
 
 //this can be placed inside a Tdef to schedule the looping of patterns
 //num cast as an int because IT CRASHES THE SERVER
+//Modifications to add more functionality to pattern classes:
+// transform = transformation to be applied to the 'number' index of the pattern being played.
+// wrapped to the modulo of the number of possible directions
+// multiplier multiplies the value by something
+// TODO: long 'long-ifies' patterns, but I haven't figured out an appropriate way to deal with that yet. It would need to give a specific signal to overwrite the already existing 'long' value in the pattern dataset.
 ~loopPattern = {
-	arg pattern = 0, period = 0.1, num = 1, delay = 0.1, modifier1 = "NONE", modifier2 = "NONE", modifier3 = "NONE", modifier4 = "NONE";
+	arg pattern = 0, period = 0.1, num = 1, delay = 0.1, transform = 0, multiplier = 1, long = 0, modifier1 = "NONE", modifier2 = "NONE", modifier3 = "NONE", modifier4 = "NONE";
 	var numReps = 1;
 	//this stops the server crashing, casting the number of repetitions as >0
 	if ( num < 1 , { numReps = 1 }, { numReps = num.asInt});
 	numReps.do({
 		//use playPattern function
-		~playPattern.(pattern,period);
+		~playPattern.(pattern,period,transform, multiplier, long);
 		//wait for as long as it takes to play the pattern - this seems inefficient and i should probably just re-write the function with ~playPattern within it, but maybe not.
 		((~stitchHistory[pattern].size)*period).wait;
 		~processing.sendMsg('/stitchSC',modifier1,modifier2,modifier3,modifier4);
@@ -85,8 +91,6 @@
 			downleft = {arg f = 440, amp = 0.1; FBSineN.ar(f,mul:amp)},
 			downright = {arg f = 440, amp = 0.1; GbmanN.ar(f,mul:amp)};
 
-			//computes stitch type so that it doesn't have to be done multiple times
-			stitch = [msg[1],msg[2]].postln;
 
 			//switch case to identify the type of stitch that has been pressed
 			sw =  switch ([msg[1],msg[2]])

@@ -47,7 +47,6 @@
 ~clearScreen = {arg size = 10; ~processing.sendMsg('/stitchSC',"CLEAR", size); "Screen Cleared!"};
 
 //function to send commands to OSCResponder
-//adjusted to handle ints
 ~sampleResponder = {
 	arg freq = 400, amp = 0.1, atk = 0.01, rel = 0.1, pan = 0, envMul = 2;
 	OSCdef(\stitchResponderSampler,
@@ -67,27 +66,27 @@
 			downright = {arg f = 440, amp = 0.1; GbmanN.ar(f,mul:amp)};
 
 			//computes stitch type so that it doesn't have to be done multiple times
-			stitch = [msg[1],msg[2]].postln;
+			stitch = msg[1];
 
 			//switch case to identify the type of stitch that has been pressed
-			sw =  switch ([msg[1],msg[2]])
-			{[0,0]} {{Pan2.ar(up.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[1,0]} {{Pan2.ar(upright.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[2,0]} {{Pan2.ar(right.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[3,0]} {{Pan2.ar(downright.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[4,0]} {{Pan2.ar(down.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[5,0]} {{Pan2.ar(downleft.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[6,0]} {{Pan2.ar(left.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[7,0]} {{Pan2.ar(upleft.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			sw =  switch (msg[1])
+			{'UP'} {{Pan2.ar(up.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			{'DOWN'} {{Pan2.ar(down.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			{'LEFT'} {{Pan2.ar(left.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			{'RIGHT'} {{Pan2.ar(right.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			{'UPLEFT'} {{Pan2.ar(upleft.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			{'UPRIGHT'} {{Pan2.ar(upright.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			{'DOWNLEFT'} {{Pan2.ar(downleft.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			{'DOWNRIGHT'} {{Pan2.ar(downright.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
 			//TODO: For next version, simplify the way in which these responders function, possibly changing the multiplier option in the function arguments to something more productive
-			{[0,1]} {{Pan2.ar(up.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[1,1]} {{Pan2.ar(upright.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[2,1]} {{Pan2.ar(right.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[3,1]} {{Pan2.ar(downright.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[4,1]} {{Pan2.ar(down.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[5,1]} {{Pan2.ar(downleft.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[6,1]} {{Pan2.ar(left.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[7,1]} {{Pan2.ar(upleft.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play};
+			{'UPLONG'} {{Pan2.ar(up.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
+			{'DOWNLONG'} {{Pan2.ar(down.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
+			{'LEFTLONG'} {{Pan2.ar(left.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
+			{'RIGHTLONG'} {{Pan2.ar(right.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
+			{'UPLEFTLONG'} {{Pan2.ar(upleft.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
+			{'UPRIGHTLONG'} {{Pan2.ar(upright.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
+			{'DOWNLEFTLONG'} {{Pan2.ar(downleft.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
+			{'DOWNRIGHTLONG'} {{Pan2.ar(downright.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play};
 
 	},'/stitchSampler');
 };
@@ -107,7 +106,6 @@
 };
 
 //new keyboardResponder using sine waves
-//ADJUSTED FOR array&int DIRECTION RESPONSES
 ~keyboardResponder = {
 	arg freq = 100, amp = 0.1, atk = 0.4, rel = 1, pan = 0, envMul = 3;
 	OSCdef(\stitchResponderKeyboard,
@@ -128,27 +126,27 @@
 
 
 			//computes stitch type so that it doesn't have to be done multiple times
-			stitch = [msg[1],msg[2]].postln;
+			stitch = msg[1];
 
 			//switch case to identify the type of stitch that has been pressed
-			sw =  switch ([msg[1],msg[2]])
-			{[0,0]} {{Pan2.ar(up.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[1,0]} {{Pan2.ar(upright.(freq*6,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[2,0]} {{Pan2.ar(right.(freq*4,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[3,0]} {{Pan2.ar(downright.(freq*8,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[4,0]} {{Pan2.ar(down.(freq*2,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[5,0]} {{Pan2.ar(downleft.(freq*7,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[6,0]} {{Pan2.ar(left.(freq*3,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[7,0]} {{Pan2.ar(upleft.(freq*5,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			sw =  switch (msg[1])
+			{'UP'} {{Pan2.ar(up.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			{'DOWN'} {{Pan2.ar(down.(freq*2,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			{'LEFT'} {{Pan2.ar(left.(freq*3,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			{'RIGHT'} {{Pan2.ar(right.(freq*4,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			{'UPLEFT'} {{Pan2.ar(upleft.(freq*5,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			{'UPRIGHT'} {{Pan2.ar(upright.(freq*6,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			{'DOWNLEFT'} {{Pan2.ar(downleft.(freq*7,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
+			{'DOWNRIGHT'} {{Pan2.ar(downright.(freq*8,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
 			//TODO: for next version - simplify the way in which these responders function, possibly changing the multiplier option in the function arguments to something more productive
-			{[0,1]} {{Pan2.ar(up.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[1,1]} {{Pan2.ar(upright.(freq*6,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[2,1]} {{Pan2.ar(right.(freq*4,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[3,1]} {{Pan2.ar(downright.(freq*8,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[4,1]} {{Pan2.ar(down.(freq*2,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[5,1]} {{Pan2.ar(downleft.(freq*7,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[6,1]} {{Pan2.ar(left.(freq*3,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[7,1]} {{Pan2.ar(upleft.(freq*5,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play};
+			{'UPLONG'} {{Pan2.ar(up.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
+			{'DOWNLONG'} {{Pan2.ar(down.(freq*2,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
+			{'LEFTLONG'} {{Pan2.ar(left.(freq*3,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
+			{'RIGHTLONG'} {{Pan2.ar(right.(freq*4,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
+			{'UPLEFTLONG'} {{Pan2.ar(upleft.(freq*5,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
+			{'UPRIGHTLONG'} {{Pan2.ar(upright.(freq*6,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
+			{'DOWNLEFTLONG'} {{Pan2.ar(downleft.(freq*7,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
+			{'DOWNRIGHTLONG'} {{Pan2.ar(downright.(freq*8,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play};
 
 			~stitchHistory[~stitchHistory.size-1].add(stitch);
 
