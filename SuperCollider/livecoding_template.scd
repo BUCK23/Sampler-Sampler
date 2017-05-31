@@ -37,6 +37,7 @@ Ndef(\samplerEffects).fadeTime = 10;
 //dir2 and len2 "  "    "
 //transform = value added to all values in pattern
 //multiplier = multiplication performed on all values in pattern
+//Parallel Tdefs can be created, which gives an interesting set of results.
 (
 Tdef(\stitch,
 	{ loop ({
@@ -76,17 +77,19 @@ Tdef(\stitch,
 	{ loop ({
 		~loopPattern.(
 			pattern:0,
-			period:0.2,
+			period:0.1,
 			num:1,
-			delay:1,
+			delay:0,
 			transform:0,
 			multiplier:1,
+			dir1:(0..7).choose,
+			len1:0
 		);
 		~sampleResponder.(
-			freq:[400,2000,3000].choose,
-			amp:0.1,
+			freq:[400,2000,3000,100,200,300,3000,4000,5000].choose,
+			amp:0.4,
 			atk:0.01,
-			rel:0.01,
+			rel:0.2,
 			pan:0,
 			envMul:2
 		);
@@ -99,18 +102,18 @@ Tdef(\stitch,
 Tdef(\stitchPar,
 	{ loop ({
 		~loopPattern.(
-			pattern:1,
+			pattern:[1,1,1,2].choose,
 			period:0.01,
 			num:1,
-			delay:(1..10).choose,
+			delay:[0.01,0.05,1,0.1,0.01,0.03,0,0,0,0,0,0,0,0,0,0,0,2].choose,
 			transform:[0,4,2,3].choose,
 			multiplier:1,
 			dir1:(0..7).choose,
-			len1:1
+			len1:0
 		);
 		~sampleResponder.(
 			freq:[400,2000,3000].choose,
-			amp:0.1,
+			amp:0.4,
 			atk:0.01,
 			rel:0.1,
 			pan:0,
@@ -120,11 +123,13 @@ Tdef(\stitchPar,
 )
 )
 
-Tdef(\stitchPar).play
+Tdef(\stitch).play
+
+Tdef(\stitchPar)
 
 (Ndef(\samplerEffects,
 	{
-	  RLPF.ar(In.ar(6,2),SinOsc.ar(0.04).range(100,4000),0.5)
+		RLPF.ar(FreeVerb.ar(In.ar(6,2),0.5,0.6),SinOsc.ar(0.04).range(100,500),0.1)
 }););
 
 
