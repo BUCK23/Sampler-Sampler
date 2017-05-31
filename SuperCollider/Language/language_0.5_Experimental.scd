@@ -37,14 +37,13 @@
 			|i|
 			//adjusted to send two values to Processing - I think, the first 0 just queries the list.
 			//Modifier in brackets to allow a negative number to be used on patterns
-			~processing.sendMsg('/stitchSC',((data[i][0]+(modifier))*multiplier)%7,data[i][1]);
+			~processing.sendMsg('/stitchSC',((data[i][0]+(modifier))*multiplier)%8,data[i][1]);
 			data[i].postln;
 			period.wait;
 		});
 		~noHistory = 0;
 	}).play;
 };
-
 
 //this can be placed inside a Tdef to schedule the looping of patterns
 //num cast as an int because IT CRASHES THE SERVER
@@ -54,7 +53,7 @@
 // multiplier multiplies the value by something
 // TODO: long 'long-ifies' patterns, but I haven't figured out an appropriate way to deal with that yet. It would need to give a specific signal to overwrite the already existing 'long' value in the pattern dataset.
 ~loopPattern = {
-	arg pattern = 0, period = 0.1, num = 1, delay = 0.1, transform = 0, multiplier = 1, long = 0, modifier1 = "NONE", modifier2 = "NONE", modifier3 = "NONE", modifier4 = "NONE";
+	arg pattern = 0, period = 0.1, num = 1, delay = 0.1, transform = 0, multiplier = 1, long = 0, dir1 = "NONE", len1 = "NONE", dir2 = "NONE", len2 = "NONE";
 	var numReps = 1;
 	//this stops the server crashing, casting the number of repetitions as >0
 	if ( num < 1 , { numReps = 1 }, { numReps = num.asInt});
@@ -63,7 +62,9 @@
 		~playPattern.(pattern,period,transform, multiplier, long);
 		//wait for as long as it takes to play the pattern - this seems inefficient and i should probably just re-write the function with ~playPattern within it, but maybe not.
 		((~stitchHistory[pattern].size)*period).wait;
-		~processing.sendMsg('/stitchSC',modifier1,modifier2,modifier3,modifier4);
+		//send the modifiers
+		~processing.sendMsg('/stitchSC',dir1,len1);
+		~processing.sendMsg('/stitchSC',dir2,len2);
 		delay.wait;
 	})
 };
@@ -116,8 +117,8 @@
 };
 
 
-//new keyboardResponder using sine waves
-//ADJUSTED FOR array&int DIRECTION RESPONSES
+
+
 ~keyboardResponder = {
 	arg freq = 100, amp = 0.1, atk = 0.4, rel = 1, pan = 0, envMul = 3;
 	OSCdef(\stitchResponderKeyboard,
@@ -127,43 +128,23 @@
 
 			var
 			//synthesises different stitching combinations
-			up = {arg f = 100, amp = 0.1; SinOsc.ar(f,0,amp)},
-			down = {arg f = 200, amp = 0.1; SinOsc.ar(f,0,amp)},
-			left = {arg f = 300, amp = 0.1; SinOsc.ar(f,0,amp)},
-			right = {arg f = 400, amp = 0.1; SinOsc.ar(f,0,amp)},
-			upleft = {arg f = 500, amp = 0.1; SinOsc.ar(f,0,amp)},
-			upright = {arg f = 600, amp = 0.1; SinOsc.ar(f,0,amp)},
-			downleft = {arg f = 700, amp = 0.1; SinOsc.ar(f,0,amp)},
-			downright = {arg f = 800, amp = 0.1; SinOsc.ar(f,0,amp)};
+			sine = {arg f = 100, amp = 0.1; Pan2.ar(SinOsc.ar(f,0,amp),pan)},
+			env = {arg mult = 0; EnvGen.ar(Env.perc(atk+(envMul*mult),rel+(envMul*mult)),1,1,0,1,2)};
 
 
-			//computes stitch type so that it doesn't have to be done multiple times
-			stitch = [msg[1],msg[2]].postln;
-
-			//switch case to identify the type of stitch that has been pressed
-			sw =  switch ([msg[1],msg[2]])
-			{[0,0]} {{Pan2.ar(up.(freq,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[1,0]} {{Pan2.ar(upright.(freq*6,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[2,0]} {{Pan2.ar(right.(freq*4,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[3,0]} {{Pan2.ar(downright.(freq*8,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[4,0]} {{Pan2.ar(down.(freq*2,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[5,0]} {{Pan2.ar(downleft.(freq*7,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[6,0]} {{Pan2.ar(left.(freq*3,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			{[7,0]} {{Pan2.ar(upleft.(freq*5,amp),pan)*EnvGen.ar(Env.perc(atk,rel),1,1,0,1,2)}.play}
-			//TODO: for next version - simplify the way in which these responders function, possibly changing the multiplier option in the function arguments to something more productive
-			{[0,1]} {{Pan2.ar(up.(freq,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[1,1]} {{Pan2.ar(upright.(freq*6,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[2,1]} {{Pan2.ar(right.(freq*4,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[3,1]} {{Pan2.ar(downright.(freq*8,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[4,1]} {{Pan2.ar(down.(freq*2,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[5,1]} {{Pan2.ar(downleft.(freq*7,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[6,1]} {{Pan2.ar(left.(freq*3,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play}
-			{[7,1]} {{Pan2.ar(upleft.(freq*5,amp),pan)*EnvGen.ar(Env.perc(atk*envMul,rel*envMul),1,1,0,1,2)}.play};
+			//first index + 1 is the frequency multiplier
+			//second index allows for an envelope multiplier to be used - if it is 0 it will not be used.
+			stitch = [msg[1],msg[2]];
+			{{sine.(freq*(msg[1]+1),amp)*env.(msg[2])}}.play;
 
 			~stitchHistory[~stitchHistory.size-1].add(stitch);
 
 	},'/stitchKeyboard');
 };
+
+
+
+
 
 ~dir = ["UP","DOWN","LEFT","RIGHT","UPLEFT","UPRIGHT","DOWNLEFT","DOWNRIGHT"];
 ~dirLong = ["UPLONG","DOWNLONG","LEFTLONG","RIGHTLONG","UPLEFTLONG","UPRIGHTLONG","DOWNLEFTLONG","DOWNRIGHTLONG"];
@@ -210,7 +191,103 @@ OSCdef(\hostClearPattern,
 );
 };
 
+~keyboardResponder.();
+~sampleResponder.();
+~hostPatternControl.();
+
 )
 
 
 
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/*
+
+//plays pattern according to specified saved pattern and relevant time delay
+// TODO: fix what 'long' does, figure out a good way to handle it - probably with strings
+~playPatternRedundant = {
+	arg pattern = 0, period = 0.1, modifier = 0, multiplier = 1, long = 0;
+	Task({
+		arg listNum = 0;
+		var data;
+		data = ~stitchHistory[pattern];
+		//iterate over the data as a local variable
+		data.size.do({
+			|i|
+			//adjusted to send two values to Processing - I think, the first 0 just queries the list.
+			//Modifier in brackets to allow a negative number to be used on patterns
+			~processing.sendMsg('/stitchSC',((data[i][0]+(modifier))*multiplier)%8,data[i][1]);
+			data[i].postln;
+			period.wait;
+		});
+		~noHistory = 0;
+	}).play;
+};
+
+// Scratchpad goes here, for building new stuff
+// a new function which goes inside of a Pbind
+// doesn't really work tho
+(
+var index = 0, prevPattern = 0;
+~newPatternFunc = {
+	arg pattern = 0, modifier = 0, multiplier = 1;
+	var data;
+	if(prevPattern != pattern) {
+	index = 0;
+	};
+	data = ~stitchHistory[pattern];
+	~processing.sendMsg('/stitchSC',((data[index][0]+(modifier))*multiplier)%8,data[index][1]);
+	index = (index + 1)%data.size;
+	prevPattern = pattern;
+	index.postln;
+}
+)
+
+(
+Ndef(\pattern,
+	Pbind(\instrument,\x,\func,Pfunc({~newPatternFunc.(pattern:Pwhite(1,3)))}),\dur,0.01);
+)
+)
+
+SynthDef(\x,{EnvGen.ar(Env.perc(0,0),doneAction:2)}).add
+
+
+//synthDef to do stitching  - newPatternFunc
+(
+var index = 0, prevPattern = 0;
+SynthDef(\newPatternFunc, {
+	arg pattern = 0, modifier = 0, multiplier = 1;
+	var data;
+	if(prevPattern != pattern) {
+	index = 0;
+	};
+	data = ~stitchHistory[pattern];
+	~processing.sendMsg('/stitchSC',((data[index][0]+(modifier))*multiplier)%8,data[index][1]);
+	index = (index + 1)%data.size;
+	prevPattern = pattern;
+	index.postln;
+	EnvGen.ar(Env.perc(0,0),doneAction:2);
+}
+).add;
+)
+
+
+8%8
+
+~newPatternFunc.(pattern:3)
+
+
+~stitchHistory[3].flop[0]
+
+[0,1,2,3,4,5,6,7].size
+
+
+~stitchHistory
+~newPatternFunc.(pattern:30)
+
+*/

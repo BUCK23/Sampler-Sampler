@@ -42,5 +42,10 @@ The issue is with Long directions, is the best thing to do to use another modifi
     - Any possible problems? 
         - It would be a hack but that's not necessarily the worst thing in the world
         - Would require re-writing of the functions that control pattern playback
+^^^^ I tried this, and it wasn't great, as it presents the issue of how to do the kinds of play pattern (1, 5, 2, 6) thing, and a SynthDef won't take it. I'm not sure how to sort this, maybe with a bunch of transformations? creating new arrays maybe?
+
+
 
 - Make the sonification better
+    - Could have a number of different 'instruments' through which to filter the sonification: Drums, sines
+    - The currently existing sonification patterns can just be a bunch of functions with different arguments passed to them rather than being hard coded (which is silly)
