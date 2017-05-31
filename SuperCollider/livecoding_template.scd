@@ -7,7 +7,20 @@
 ~sampleResponder.();
 ~hostPatternControl.();
 //OPTIONAL: StageLimiter, depends on BatLib Quark
-//StageLimiter.activate
+StageLimiter.activate
+//These Ndefs are used to hold effects, which are constructed around the In.ar of each class
+(Ndef(\keyboardEffects,
+	{
+		In.ar(4,2)
+}););
+Ndef(\keyboardEffects).play;
+Ndef(\keyboardEffects).fadeTime = 10;
+(Ndef(\samplerEffects,
+	{
+		In.ar(6,2)
+}););
+Ndef(\samplerEffects).play;
+Ndef(\samplerEffects).fadeTime = 10;
 )
 
 //if you hard stop SCLang, run this block to get functionality back, or you will lose stored patterns.
@@ -28,7 +41,7 @@
 Tdef(\stitch,
 	{ loop ({
 		~loopPattern.(
-			pattern:1,
+			pattern:0,
 			period:0.1,
 			num:1,
 			delay:0.5,
@@ -58,7 +71,68 @@ Tdef(\stitch).play;
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
+(
+Tdef(\stitch,
+	{ loop ({
+		~loopPattern.(
+			pattern:0,
+			period:0.2,
+			num:1,
+			delay:1,
+			transform:0,
+			multiplier:1,
+		);
+		~sampleResponder.(
+			freq:[400,2000,3000].choose,
+			amp:0.1,
+			atk:0.01,
+			rel:0.01,
+			pan:0,
+			envMul:2
+		);
+	})}
+)
+)
 
+
+(
+Tdef(\stitchPar,
+	{ loop ({
+		~loopPattern.(
+			pattern:1,
+			period:0.01,
+			num:1,
+			delay:(1..10).choose,
+			transform:[0,4,2,3].choose,
+			multiplier:1,
+			dir1:(0..7).choose,
+			len1:1
+		);
+		~sampleResponder.(
+			freq:[400,2000,3000].choose,
+			amp:0.1,
+			atk:0.01,
+			rel:0.1,
+			pan:0,
+			envMul:2
+		);
+	})}
+)
+)
+
+Tdef(\stitchPar).play
+
+(Ndef(\samplerEffects,
+	{
+	  RLPF.ar(In.ar(6,2),SinOsc.ar(0.04).range(100,4000),0.5)
+}););
+
+
+Ndef(\samplerEffects).fadeTime = 5
+
+Ndef(\samplerEffects).play
+
+Ndef(\samplerEffects).clear
 
 (
 Ndef(\theThing,
