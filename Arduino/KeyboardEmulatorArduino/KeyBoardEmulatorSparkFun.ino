@@ -5,9 +5,9 @@ int button4Press = 0;   // 'w'
 int button5Press = 0;   // 's'
 int button6Press = 0;   // 'c'
 int button7Press = 0;   // 'x'
-int button8Press = 0;   // 'Alt'
+int button8Press = 0;   // 'Shift'
 int button9Press = 0;   // 'ON/OFF'
-int button10Press = 0;  // 'Shift'
+int button10Press = 0;  // 'Alt'
 int button16Press = 0;  // 'MousePressed'
 int button14Press = 0;  // 'v'
 int button15Press = 0;  // 'a'
@@ -27,9 +27,9 @@ pinMode(4, INPUT_PULLUP);   // 'w'
 pinMode(5, INPUT_PULLUP);   // 's'
 pinMode(6, INPUT_PULLUP);   // 'c'
 pinMode(7, INPUT_PULLUP);   // 'x'
-pinMode(8, INPUT_PULLUP);   // 'Alt'
+pinMode(8, INPUT_PULLUP);   // 'Shift'
 pinMode(9, INPUT_PULLUP);   // 'ON/OFF'
-pinMode(10, INPUT_PULLUP);   // 'Shift'
+pinMode(10, INPUT_PULLUP);   // 'ALT'
 pinMode(16, INPUT_PULLUP);   // 'MousePressed'
 pinMode(14, INPUT_PULLUP);   // 'v'
 pinMode(15, INPUT_PULLUP);   // 'a'
@@ -145,25 +145,25 @@ Mouse.begin();
 
 // alt, shift, MousePressed
 
-  if(digitalRead(8)==LOW && button8Press == 0){      //  'alt'
+  if(digitalRead(10)==LOW && button10Press == 0){      //  'alt'
   Keyboard.press(KEY_LEFT_ALT);
-  button8Press = 1;
-  lastDebounceTime = millis();
-  }
-  if(digitalRead(8) != LOW && button8Press == 1){
-    Keyboard.release(KEY_LEFT_ALT);
-  button8Press = 0;
-  lastDebounceTime = millis();
-  }
-
-  if(digitalRead(10)==LOW && button10Press == 0){      //  'Shift'
-  Keyboard.press(KEY_LEFT_SHIFT);
   button10Press = 1;
   lastDebounceTime = millis();
   }
   if(digitalRead(10) != LOW && button10Press == 1){
-  Keyboard.release(KEY_LEFT_SHIFT);
+    Keyboard.release(KEY_LEFT_ALT);
   button10Press = 0;
+  lastDebounceTime = millis();
+  }
+
+  if(digitalRead(8)==LOW && button8Press == 0){      //  'Shift'
+  Keyboard.press(KEY_LEFT_SHIFT);
+  button8Press = 1;
+  lastDebounceTime = millis();
+  }
+  if(digitalRead(8) != LOW && button8Press == 1){
+  Keyboard.release(KEY_LEFT_SHIFT);
+  button8Press = 0;
   lastDebounceTime = millis();
   }
 
