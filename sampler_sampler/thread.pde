@@ -21,7 +21,7 @@ class Thread {                                              // create new class
   // thread dirction method
   // first input controls the movement speed, second input controls the type of OSCMessage sent to SuperCollider (Keyboard vs Sequenced input)
   // if movement is 1, send normal string, if movement is 2, send a string to dictate a longer movement. This handles 'ALT' presses
-  
+
   // These directions are now integers. 0-7 with a second entry of 0 is normal directions, and a second entry of 1 is a long direction
   // They have been re-arranged clockwise
   void up(int n, int inputType) {          //  UP = 'e'
@@ -57,7 +57,7 @@ class Thread {                                              // create new class
       }
     }
   }
-  
+
   void upRight(int n, int inputType) {      //  UP+RIGHT = 'r'
       synchronized(stitches) {
         move(n, 0-n);
@@ -90,7 +90,7 @@ class Thread {                                              // create new class
         }
       }
     }
-    
+
       void right(int n, int inputType) {       //  RIGHT = 'f'
     synchronized(stitches) {
       move(n, 0);
@@ -123,7 +123,7 @@ class Thread {                                              // create new class
       }
     }
   }
-  
+
   void downRight(int n, int inputType) {   //  DOWN+RIGHT = 'v'
       synchronized(stitches) {
         move(n, n);
@@ -292,7 +292,7 @@ class Thread {                                              // create new class
       }
     }
 
-    
+
 
 
     // direction control keys function
@@ -325,7 +325,7 @@ class Thread {                                              // create new class
 
         //SQUARES
 
-        else if (c == 'C') {   // DRAW SQUARE TOP RIGHT
+        else if (c == 'F') {   // DRAW SQUARE TOP RIGHT
           up(1, 0);
           right(1, 0);
           down(1, 0);
@@ -334,7 +334,7 @@ class Thread {                                              // create new class
           up(1, 0);
           left(1, 0);
           down(1, 0);
-        } else if (c == 'S') {      // DRAW SQUARE DOWN RIGHT
+        } else if (c == 'C') {      // DRAW SQUARE DOWN RIGHT
           down(1, 0);
           right(1, 0);
           up(1, 0);
@@ -343,7 +343,7 @@ class Thread {                                              // create new class
           down(1, 0);
           left(1, 0);
           up(1, 0);
-        } else if (c == 'E') {   // DRAW SQAURE DOWN LEFT
+        } else if (c == 'S') {   // DRAW SQAURE DOWN LEFT
           down(1, 0);
           left(1, 0);
           up(1, 0);
@@ -352,7 +352,7 @@ class Thread {                                              // create new class
           down(1, 0);
           right(1, 0);
           up(1, 0);
-        } else if (c == 'F') {     // DRAW SQUARE UP LEFT
+        } else if (c == 'E') {     // DRAW SQUARE UP LEFT
           up(1, 0);
           left(1, 0);
           down(1, 0);
@@ -365,7 +365,7 @@ class Thread {                                              // create new class
 
         // CROSSES
 
-        else if (c == 'X') {            // CROSS TOP RIGHT
+        else if (c == 'R') {            // CROSS TOP RIGHT
           if (isEven() == false) {
             right(1, 0);
             upLeft(1, 0);
@@ -377,7 +377,7 @@ class Thread {                                              // create new class
             downRight(1, 0);
             left(1, 0);
           }
-        } else if (c == 'W') {                  // CROSS BOTTOM RIGHT
+        } else if (c == 'V') {                  // CROSS BOTTOM RIGHT
           if (isEven() == false) {
             right(1, 0);
             downLeft(1, 0);
@@ -389,7 +389,7 @@ class Thread {                                              // create new class
             upRight(1, 0);
             left(1, 0);
           }
-        } else if (c == 'R') {                  // CROSS BOTTOM LEFT
+        } else if (c == 'X') {                  // CROSS BOTTOM LEFT
           if (isEven() == false) {
             left(1, 0);
             downRight(1, 0);
@@ -401,7 +401,7 @@ class Thread {                                              // create new class
             upLeft(1, 0);
             right(1, 0);
           }
-        } else if (c == 'V') {                  // CROSS TOP LEFT
+        } else if (c == 'W') {                  // CROSS TOP LEFT
           if (isEven() == false) {
             left(1, 0);
             upRight(1, 0);
@@ -434,11 +434,11 @@ class Thread {                                              // create new class
           newY = y + stitch.y;                // decaler var newY (line endpoint) y pos + values from move function (see stitch object arguments)
           stroke(up ? color(0, 250) : color(200, 80));     // set stroke colour depending on boolean up true/false
           // result = test ? expression1 : expression2
-          // is equivalent to this structure: 
+          // is equivalent to this structure:
           /*  if (test) {
-           result = expression1                                                               
-           } else {                        
-           result = expression2 
+           result = expression1
+           } else {
+           result = expression2
            }                          */
           line(x, y, newX, newY);                  // draw stitch
           x = newX;                                // makes stitch end start point x for next stitch
