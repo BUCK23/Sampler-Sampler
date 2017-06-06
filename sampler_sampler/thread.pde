@@ -21,6 +21,9 @@ class Thread {                                              // create new class
   // thread dirction method
   // first input controls the movement speed, second input controls the type of OSCMessage sent to SuperCollider (Keyboard vs Sequenced input)
   // if movement is 1, send normal string, if movement is 2, send a string to dictate a longer movement. This handles 'ALT' presses
+  
+  // These directions are now integers. 0-7 with a second entry of 0 is normal directions, and a second entry of 1 is a long direction
+  // They have been re-arranged clockwise
   void up(int n, int inputType) {          //  UP = 'e'
     synchronized(stitches) {
       move(0, 0-n);
@@ -28,11 +31,13 @@ class Thread {                                              // create new class
         if (inputType == 0) {
           //send relevant OSC message to SuperCollider
           OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-          stitchMsg.add("UP");
+          stitchMsg.add(0);
+          stitchMsg.add(0);
           oscP5.send(stitchMsg, supercollider);
         } else if (inputType == 1) {
           OscMessage stitchMsg = new OscMessage("/stitchSampler");
-          stitchMsg.add("UP");
+          stitchMsg.add(0);
+          stitchMsg.add(0);
           oscP5.send(stitchMsg, supercollider);
         }
         //send message for long stitches
@@ -40,16 +45,119 @@ class Thread {                                              // create new class
         if (inputType == 0) {
           //send relevant OSC message to SuperCollider
           OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-          stitchMsg.add("UPLONG");
+          stitchMsg.add(0);
+          stitchMsg.add(1);
           oscP5.send(stitchMsg, supercollider);
         } else if (inputType == 1) {
           OscMessage stitchMsg = new OscMessage("/stitchSampler");
-          stitchMsg.add("UPLONG");
+          stitchMsg.add(0);
+          stitchMsg.add(1);
           oscP5.send(stitchMsg, supercollider);
         }
       }
     }
   }
+  
+  void upRight(int n, int inputType) {      //  UP+RIGHT = 'r'
+      synchronized(stitches) {
+        move(n, 0-n);
+        if ( n == 1) {
+          if (inputType == 0) {
+            //send relevant OSC message to SuperCollider
+            OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
+            stitchMsg.add(1);
+            stitchMsg.add(0);
+            oscP5.send(stitchMsg, supercollider);
+          } else if (inputType == 1) {
+            OscMessage stitchMsg = new OscMessage("/stitchSampler");
+            stitchMsg.add(1);
+            stitchMsg.add(0);
+            oscP5.send(stitchMsg, supercollider);
+          }
+        } else if ( n == 2 ) {
+          if (inputType == 0) {
+            //send relevant OSC message to SuperCollider
+            OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
+            stitchMsg.add(1);
+            stitchMsg.add(1);
+            oscP5.send(stitchMsg, supercollider);
+          } else if (inputType == 1) {
+            OscMessage stitchMsg = new OscMessage("/stitchSampler");
+            stitchMsg.add(1);
+            stitchMsg.add(1);
+            oscP5.send(stitchMsg, supercollider);
+          }
+        }
+      }
+    }
+    
+      void right(int n, int inputType) {       //  RIGHT = 'f'
+    synchronized(stitches) {
+      move(n, 0);
+      if ( n == 1) {
+        if (inputType == 0) {
+          //send relevant OSC message to SuperCollider
+          OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
+          stitchMsg.add(2);
+          stitchMsg.add(0);
+          oscP5.send(stitchMsg, supercollider);
+        } else if (inputType == 1) {
+          OscMessage stitchMsg = new OscMessage("/stitchSampler");
+          stitchMsg.add(2);
+          stitchMsg.add(0);
+          oscP5.send(stitchMsg, supercollider);
+        }
+      } else if ( n == 2 ) {
+        if (inputType == 0) {
+          //send relevant OSC message to SuperCollider
+          OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
+          stitchMsg.add(2);
+          stitchMsg.add(1);
+          oscP5.send(stitchMsg, supercollider);
+        } else if (inputType == 1) {
+          OscMessage stitchMsg = new OscMessage("/stitchSampler");
+          stitchMsg.add(2);
+          stitchMsg.add(1);
+          oscP5.send(stitchMsg, supercollider);
+        }
+      }
+    }
+  }
+  
+  void downRight(int n, int inputType) {   //  DOWN+RIGHT = 'v'
+      synchronized(stitches) {
+        move(n, n);
+        if ( n == 1 ) {
+          if (inputType == 0) {
+            //send relevant OSC message to SuperCollider
+            OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
+            stitchMsg.add(3);
+            stitchMsg.add(0);
+            oscP5.send(stitchMsg, supercollider);
+          } else if (inputType == 1) {
+            OscMessage stitchMsg = new OscMessage("/stitchSampler");
+            stitchMsg.add(3);
+            stitchMsg.add(0);
+            oscP5.send(stitchMsg, supercollider);
+          }
+        } else if ( n == 2 ) {
+          if (inputType == 0) {
+            //send relevant OSC message to SuperCollider
+            OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
+            stitchMsg.add(3);
+            stitchMsg.add(1);
+            oscP5.send(stitchMsg, supercollider);
+          } else if (inputType == 1) {
+            OscMessage stitchMsg = new OscMessage("/stitchSampler");
+            stitchMsg.add(3);
+            stitchMsg.add(1);
+            oscP5.send(stitchMsg, supercollider);
+          }
+        }
+      }
+    }
+
+
 
   void down(int n, int inputType) {        //  DOWN = 'c'
     synchronized(stitches) {
@@ -58,80 +166,93 @@ class Thread {                                              // create new class
         if (inputType == 0) {
           //send relevant OSC message to SuperCollider
           OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-          stitchMsg.add("DOWN");
+          stitchMsg.add(4);
+          stitchMsg.add(0);
           oscP5.send(stitchMsg, supercollider);
         } else if (inputType == 1) {
           OscMessage stitchMsg = new OscMessage("/stitchSampler");
-          stitchMsg.add("DOWN");
+          stitchMsg.add(4);
+          stitchMsg.add(0);
           oscP5.send(stitchMsg, supercollider);
         }
       } else if ( n == 2 ) {
         if (inputType == 0) {
           //send relevant OSC message to SuperCollider
           OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-          stitchMsg.add("DOWNLONG");
+          stitchMsg.add(4);
+          stitchMsg.add(1);
           oscP5.send(stitchMsg, supercollider);
         } else if (inputType == 1) {
           OscMessage stitchMsg = new OscMessage("/stitchSampler");
-          stitchMsg.add("DOWNLONG");
+          stitchMsg.add(4);
+          stitchMsg.add(1);
           oscP5.send(stitchMsg, supercollider);
         }
       }
     }
   }
 
-  void left(int n, int inputType) {        //  LEFT = 's'        // NOT GOING LEFT??
+    void downLeft(int n, int inputType) {    //  DOWN+LEFT = 'x'
+      synchronized(stitches) {
+        move(0-n, n);
+        if ( n == 1) {
+          if (inputType == 0) {
+            //send relevant OSC message to SuperCollider
+            OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
+            stitchMsg.add(5);
+            stitchMsg.add(0);
+            oscP5.send(stitchMsg, supercollider);
+          } else if (inputType == 1) {
+            OscMessage stitchMsg = new OscMessage("/stitchSampler");
+            stitchMsg.add(5);
+            stitchMsg.add(0);
+            oscP5.send(stitchMsg, supercollider);
+          }
+        } else if ( n == 2 ) {
+          if (inputType == 0) {
+            //send relevant OSC message to SuperCollider
+            OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
+            stitchMsg.add(5);
+            stitchMsg.add(1);
+            oscP5.send(stitchMsg, supercollider);
+          } else if (inputType == 1) {
+            OscMessage stitchMsg = new OscMessage("/stitchSampler");
+            stitchMsg.add(5);
+            stitchMsg.add(1);
+            oscP5.send(stitchMsg, supercollider);
+          }
+        }
+      }
+    }
+
+
+  void left(int n, int inputType) {        //  LEFT = 's'
     synchronized(stitches) {
       move(0-n, 0);
       if (n == 1) {
         if (inputType == 0) {
           //send relevant OSC message to SuperCollider
           OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-          stitchMsg.add("LEFT");
+          stitchMsg.add(6);
+          stitchMsg.add(0);
           oscP5.send(stitchMsg, supercollider);
         } else if (inputType == 1) {
           OscMessage stitchMsg = new OscMessage("/stitchSampler");
-          stitchMsg.add("LEFT");
+          stitchMsg.add(6);
+          stitchMsg.add(0);
           oscP5.send(stitchMsg, supercollider);
         }
       } else if (n == 2) {
         if (inputType == 0) {
           //send relevant OSC message to SuperCollider
           OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-          stitchMsg.add("LEFTLONG");
+          stitchMsg.add(6);
+          stitchMsg.add(1);
           oscP5.send(stitchMsg, supercollider);
         } else if (inputType == 1) {
           OscMessage stitchMsg = new OscMessage("/stitchSampler");
-          stitchMsg.add("LEFTLONG");
-          oscP5.send(stitchMsg, supercollider);
-        }
-      }
-    }
-  }
-
-  void right(int n, int inputType) {       //  RIGHT = 'f'
-    synchronized(stitches) {
-      move(n, 0);
-      if ( n == 1) {
-        if (inputType == 0) {
-          //send relevant OSC message to SuperCollider
-          OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-          stitchMsg.add("RIGHT");
-          oscP5.send(stitchMsg, supercollider);
-        } else if (inputType == 1) {
-          OscMessage stitchMsg = new OscMessage("/stitchSampler");
-          stitchMsg.add("RIGHT");
-          oscP5.send(stitchMsg, supercollider);
-        }
-      } else if ( n == 2 ) {
-        if (inputType == 0) {
-          //send relevant OSC message to SuperCollider
-          OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-          stitchMsg.add("RIGHTLONG");
-          oscP5.send(stitchMsg, supercollider);
-        } else if (inputType == 1) {
-          OscMessage stitchMsg = new OscMessage("/stitchSampler");
-          stitchMsg.add("RIGHTLONG");
+          stitchMsg.add(6);
+          stitchMsg.add(1);
           oscP5.send(stitchMsg, supercollider);
         }
       }
@@ -145,114 +266,33 @@ class Thread {                                              // create new class
           if (inputType == 0) {
             //send relevant OSC message to SuperCollider
             OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-            stitchMsg.add("UPLEFT");
+            stitchMsg.add(7);
+            stitchMsg.add(0);
             oscP5.send(stitchMsg, supercollider);
           } else if (inputType == 1) {
             OscMessage stitchMsg = new OscMessage("/stitchSampler");
-            stitchMsg.add("UPLEFT");
+            stitchMsg.add(7);
+            stitchMsg.add(0);
             oscP5.send(stitchMsg, supercollider);
           }
         } else if ( n == 2) {
           if (inputType == 0) {
             //send relevant OSC message to SuperCollider
             OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-            stitchMsg.add("UPLEFTLONG");
+            stitchMsg.add(7);
+            stitchMsg.add(1);
             oscP5.send(stitchMsg, supercollider);
           } else if (inputType == 1) {
             OscMessage stitchMsg = new OscMessage("/stitchSampler");
-            stitchMsg.add("UPLEFTLONG");
+            stitchMsg.add(7);
+            stitchMsg.add(1);
             oscP5.send(stitchMsg, supercollider);
           }
         }
       }
     }
 
-    void upRight(int n, int inputType) {      //  UP+RIGHT = 'r'
-      synchronized(stitches) {
-        move(n, 0-n);
-        if ( n == 1) {
-          if (inputType == 0) {
-            //send relevant OSC message to SuperCollider
-            OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-            stitchMsg.add("UPRIGHT");
-            oscP5.send(stitchMsg, supercollider);
-          } else if (inputType == 1) {
-            OscMessage stitchMsg = new OscMessage("/stitchSampler");
-            stitchMsg.add("UPRIGHT");
-            oscP5.send(stitchMsg, supercollider);
-          }
-        } else if ( n == 2 ) {
-          if (inputType == 0) {
-            //send relevant OSC message to SuperCollider
-            OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-            stitchMsg.add("UPRIGHTLONG");
-            oscP5.send(stitchMsg, supercollider);
-          } else if (inputType == 1) {
-            OscMessage stitchMsg = new OscMessage("/stitchSampler");
-            stitchMsg.add("UPRIGHTLONG");
-            oscP5.send(stitchMsg, supercollider);
-          }
-        }
-      }
-    }
-
-    void downRight(int n, int inputType) {   //  DOWN+RIGHT = 'v'
-      synchronized(stitches) {
-        move(n, n);
-        if ( n == 1 ) {
-          if (inputType == 0) {
-            //send relevant OSC message to SuperCollider
-            OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-            stitchMsg.add("DOWNRIGHT");
-            oscP5.send(stitchMsg, supercollider);
-          } else if (inputType == 1) {
-            OscMessage stitchMsg = new OscMessage("/stitchSampler");
-            stitchMsg.add("DOWNRIGHT");
-            oscP5.send(stitchMsg, supercollider);
-          }
-        } else if ( n == 2 ) {
-          if (inputType == 0) {
-            //send relevant OSC message to SuperCollider
-            OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-            stitchMsg.add("DOWNRIGHTLONG");
-            oscP5.send(stitchMsg, supercollider);
-          } else if (inputType == 1) {
-            OscMessage stitchMsg = new OscMessage("/stitchSampler");
-            stitchMsg.add("DOWNRIGHTLONG");
-            oscP5.send(stitchMsg, supercollider);
-          }
-        }
-      }
-    }
-
-    void downLeft(int n, int inputType) {    //  DOWN+LEFT = 'x'
-      synchronized(stitches) {
-        move(0-n, n);
-        if ( n == 1) {
-          if (inputType == 0) {
-            //send relevant OSC message to SuperCollider
-            OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-            stitchMsg.add("DOWNLEFT");
-            oscP5.send(stitchMsg, supercollider);
-          } else if (inputType == 1) {
-            OscMessage stitchMsg = new OscMessage("/stitchSampler");
-            stitchMsg.add("DOWNLEFT");
-            oscP5.send(stitchMsg, supercollider);
-          }
-        } else if ( n == 2 ) {
-          if (inputType == 0) {
-            //send relevant OSC message to SuperCollider
-            OscMessage stitchMsg = new OscMessage("/stitchKeyboard");
-            stitchMsg.add("DOWNLEFTLONG");
-            oscP5.send(stitchMsg, supercollider);
-          } else if (inputType == 1) {
-            OscMessage stitchMsg = new OscMessage("/stitchSampler");
-            stitchMsg.add("DOWNLEFTLONG");
-            oscP5.send(stitchMsg, supercollider);
-          }
-        }
-      }
-    }
+    
 
 
     // direction control keys function
