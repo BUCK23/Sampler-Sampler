@@ -40,7 +40,7 @@
 			//adjusted to send two values to Processing - I think, the first 0 just queries the list.
 			//Modifier in brackets to allow a negative number to be used on patterns
 			~processing.sendMsg('/stitchSC',((data[i][0]+(modifier))*multiplier)%8,data[i][1]);
-			data[i].postln;
+			//data[i].postln;
 			period.wait;
 		});
 		~noHistory = 0;
@@ -61,6 +61,8 @@
 	if ( num < 1 , { numReps = 1 }, { numReps = num.asInt});
 	numReps.do({
 		//use playPattern function
+		"Playing Pattern ".post;
+		pattern.postln;
 		~playPattern.(pattern,period,transform, multiplier, long);
 		//wait for as long as it takes to play the pattern - this seems inefficient and i should probably just re-write the function with ~playPattern within it, but maybe not.
 		((~stitchHistory[pattern].size)*period).wait;
