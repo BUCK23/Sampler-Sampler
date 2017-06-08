@@ -9,17 +9,51 @@
 //set value for history to be recorded
 // !! THIS MAY NOT BE NEEDED !!
 ~noHistory = 0;
+//a value to track the index to which a metapattern has been logged
+~metaPatternIndex = 0;
+//List of metapattern values - these will be useful for figuring out which
+~metaPatterns = List.new;
 
 //this saves the current pattern
 ~savePattern = {
+	if ( ~stitchHistory[~stitchHistory.size-1].size == 0,
+		{
+			"METAPATTERN CREATED! Created from patterns: ".post;
+			//create a new list index - Unnecessary
+			//~stitchHistory.add(List.new);
+			//a holder for the metapattern
+			~temp = List.new;
+			for ( ~metaPatternIndex, ~stitchHistory.size-1,
+				//compose the metapattern as a temporary variable
+				{arg i;  ~temp.add(~stitchHistory[i]);
+					i.post;
+					" ".post;
+			});
+			//remove the empty set to make room for the new one.
+			~stitchHistory.removeAt(~stitchHistory.size-1);
+			//add the flattened temporary variable to make the pattern usable
+			~stitchHistory.add(~temp.flatten);
+			"".postln;
+			//print the location of the new metapattern
+			"New Pattern Created at Index: ".post;
+			(~stitchHistory.size-1).postln;
+			~metaPatternIndex = ~stitchHistory.size;
+			//add the metapattern indexes to a list, this will be useful later and for reference.s
+			~metaPatterns.add(~metaPatternIndex-1);
+			"Current Metapatterns: ".post;
+			~metaPatterns.asArray.postln;
+			//create a new list index
+			~stitchHistory.add(List.new);
+		}
+		,{
 	~stitchHistory.add(List.new);
 	"".postln;
 	"Pattern ".post;
 	(~stitchHistory.size.asInt-2).post;
 	" Saved!".postln;
 	~stitchHistory[~stitchHistory.size-2];
+	});
 };
-
 
 //this clears the current iteration
 ~clearPattern = {
@@ -63,7 +97,7 @@
 	numReps.do({
 		//use playPattern function
 		//"Playing Pattern ".post;
-		pattern.post;
+		//pattern.post;
 		~playPattern.(pattern,period,transform, multiplier, long);
 		//wait for as long as it takes to play the pattern - this seems inefficient and i should probably just re-write the function with ~playPattern within it, but maybe not.
 		((~stitchHistory[pattern].size)*period).wait;

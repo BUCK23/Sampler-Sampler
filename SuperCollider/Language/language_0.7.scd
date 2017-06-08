@@ -9,17 +9,33 @@
 //set value for history to be recorded
 // !! THIS MAY NOT BE NEEDED !!
 ~noHistory = 0;
+//a value to track the index to which a metapattern has been logged
+~metaPatternIndex = 0;
 
 //this saves the current pattern
 ~savePattern = {
+	if ( ~stitchHistory[~stitchHistory.size-1].size == 0,
+		{
+			"METAPATTERN CREATED! Created from patterns: ".postln;
+			//create a new list index - Unnecessary
+			//~stitchHistory.add(List.new);
+			for ( ~metaPatternIndex, ~stitchHistory.size-1,
+				{arg i;  ~stitchHistory[~stitchHistory.size-1].add(~stitchHistory[i]);
+					i.post;
+					" ".post;
+			});
+			"New Pattern Created at Index: ".post;
+			(~stitchHistory.size-1).postln;
+		}
+		,{
 	~stitchHistory.add(List.new);
 	"".postln;
 	"Pattern ".post;
 	(~stitchHistory.size.asInt-2).post;
 	" Saved!".postln;
 	~stitchHistory[~stitchHistory.size-2];
+	});
 };
-
 
 //this clears the current iteration
 ~clearPattern = {
