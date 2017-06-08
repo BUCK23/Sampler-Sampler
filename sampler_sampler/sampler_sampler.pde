@@ -59,6 +59,8 @@ int clientPort = 57120;
 
 int grid = 32;
 
+color needleColor;
+
 void setup() {
 
   frameRate(30);
@@ -70,8 +72,10 @@ void setup() {
   //starting sender to sclang's default port
   if (mode == "client"){
   supercollider = new NetAddress(clientIP, clientPort);
+  needleColor = color(255,0,0);
   } else if (mode == "host"){
-  supercollider = new NetAddress(hostIP, hostPort);  
+  supercollider = new NetAddress(hostIP, hostPort);
+  needleColor = color(5,255,255);
   }
 
   // draw plain background

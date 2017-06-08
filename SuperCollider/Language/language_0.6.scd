@@ -128,7 +128,7 @@ Old sample responder
 //function to send commands to OSCResponder
 //adjusted to handle ints
 ~sampleResponder = {
-	arg freq = 400, amp = 0.1, atk = 0.01, rel = 0.1, pan = 0, envMul = 2;
+	arg freq = 400, amp = 0.1, atk = 0.01, rel = 0.1, pan = 0, envMul = 4;
 	OSCdef(\stitchResponderSampler,
 		{
 			|msg, time, addr, recvPort, sw, stitch|
@@ -144,7 +144,7 @@ Old sample responder
 			upright = {arg f = 440, amp = 0.1; HenonN.ar(f,mul:amp)},
 			downleft = {arg f = 440, amp = 0.1; FBSineN.ar(f,mul:amp)},
 			downright = {arg f = 440, amp = 0.1; GbmanN.ar(f,mul:amp)},
-			env = {arg mult = 0; EnvGen.ar(Env.perc(atk+(envMul*mult),rel+(envMul*mult)),1,1,0,1,2)};
+			env = {arg mult = 0; EnvGen.ar(Env.perc(atk+((envMul*mult)*atk),rel+((envMul*mult)*rel)),1,1,0,1,2)};
 
 
 			//switch case to identify the type of stitch that has been pressed

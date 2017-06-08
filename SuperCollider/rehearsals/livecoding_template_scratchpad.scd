@@ -30,21 +30,9 @@ Ndef(\samplerEffects).fadeTime = 10;
 ~keyboardResponder.();
 ~sampleResponder.();
 ~hostPatternControl.();
-(Ndef(\keyboardEffects,
-	{
-		var in = In.ar(4,2);
-		in;
-}););
-Ndef(\keyboardEffects).play;
-Ndef(\keyboardEffects).fadeTime = 10;
-(Ndef(\samplerEffects,
-	{
-		var in = In.ar(6,2);
-		in;
-}););
-Ndef(\samplerEffects).play;
-Ndef(\samplerEffects).fadeTime = 10;
 )
+
+~keyboardResponder.(80)
 
 //Task Definition to build stitches,  see examples/documentation for how to use
 //dir1 and len1 = direction and length of modifier - 0 = normal, 1 = double
@@ -57,17 +45,17 @@ Tdef(\stitch,
 	{ loop ({
 		~loopPattern.(
 			pattern:0,
-			period:0.5,
+			period:0.1,
 			num:1,
-			delay:5,
+			delay:0.5,
 			transform:0,
 			multiplier:1,
 		);
 		~sampleResponder.(
 			freq:400,
 			amp:0.1,
-			atk:0.01,
-			rel:0.5,
+			atk:0.1,
+			rel:0.01,
 			pan:0,
 			envMul:2
 		);
@@ -76,24 +64,6 @@ Tdef(\stitch,
 )
 
 Tdef(\stitch).play;
-
-
-//keyboard effects - default
-(Ndef(\keyboardEffects,
-	{
-		var in = In.ar(4,2);
-		in;
-}););
-
-
-//sampler effects - default
-(Ndef(\samplerEffects,
-	{
-		var in = In.ar(6,2);
-		in;
-}););
-
-~clearScreen.(20)
 
 //scratchpad goes here:
 //////////////////////////////////////////////////
@@ -104,57 +74,149 @@ Tdef(\stitch).play;
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
+(
+Tdef(\stitch,
+	{ loop ({
+		~loopPattern.(
+			pattern:8,
+			period:0.1,
+			num:1,
+			delay:0,
+			transform:0,
+			multiplier:1,
+			dir1:(0..7).choose,
+			len1:0
+		);
+		~sampleResponder.(
+			freq:[400,2000,3000,100,200,300,3000,4000,5000].choose,
+			amp:0.4,
+			atk:0.01,
+			rel:0.2,
+			pan:0,
+			envMul:2
+		);
+	})}
+)
+)
+
+Tdef(\stitch).play
+
+//2
 
 
+(
+Tdef(\stitchPar,
+	{ loop ({
+		~loopPattern.(
+			pattern:9,
+			period:0.1,
+			num:1,
+			delay:0.1,
+			transform:[0,4,2,3].choose,
+			multiplier:1,
+			dir1:(0..7).choose,
+			len1:1
+		);
+		~sampleResponder.(
+			freq:(1..10).choose*1000,
+			amp:0.4,
+			atk:0.01,
+			rel:0.01,
+			pan:0,
+			envMul:2
+		);
+	})}
+)
+)
+
+Tdef(\stitch).stop
+
+Tdef(\stitchPar).play
+
+(Ndef(\samplerEffects,
+	{
+		In.ar(6,2)
+}););
 
 
+Ndef(\samplerEffects).fadeTime = 5
+
+Ndef(\samplerEffects).play
+
+Ndef(\samplerEffects).clear
+
+(
+Ndef(\theThing,
+	Pbind(\instrument,\none,\thing,Pfunc({~playPattern.()}))
+)
+)
+
+~sampleResponder.(
+			freq:rrand(100,401),
+			amp:0.01,
+			atk:0.01,
+			rel:0.5,
+			pan:rrand(-1,1),
+			envMul:2
+		);
 
 
-/*
-////////////BREAK IN CASE OF EMERGENCY
-BREAK IN CASE OF EMERGENCY
-BREAK IN CASE OF EMERGENCY
-BREAK IN CASE OF EMERGENCY
+Ndef(\theThing).play
 
 (
 Tdef(\stitch,
 	{ loop ({
 		~loopPattern.(
 			pattern:0,
-			period:0.1,
+			period:0.01,
 			num:1,
-			delay:0.5,
-			transform:0,
-			multiplier:1,
+			delay:0.1,
+			transform:rrand(-4,4),
+			multiplier:rrand(1,3),
+			modifier1:"NONE",
+			modifier2:"NONE",
+			modifier3:"NONE",
+			modifier4:"NONE",
 		);
 		~sampleResponder.(
-			freq:400,
-			amp:0.1,
-			atk:0.1,
-			rel:0.01,
-			pan:0,
+			freq:rrand(100,401),
+			amp:0.01,
+			atk:0.01,
+			rel:0.5,
+			pan:rrand(-1,1),
 			envMul:2
 		);
 	})}
 )
 )
+
+~stitchHistory
+
+Tdef(\stitch).play
+
+~clearScreen.(20)
+
+OSCFunc.tracefer
+
 
 (
-Tdef(\stitchPar,
+Tdef(\stitch,
 	{ loop ({
 		~loopPattern.(
-			pattern:0,
-			period:0.1,
+			pattern:2,
+			period:0.01,
 			num:1,
-			delay:0.5,
+			delay:0.01,
 			transform:0,
 			multiplier:1,
+			dir1:[1,6,2].choose,
+			len1:0,
 		);
 		~sampleResponder.(
-			freq:400,
-			amp:0.1,
-			atk:0.1,
-			rel:0.01,
+			freq:[400,900].choose,
+			amp:0.3,
+			atk:0.03,
+			rel:0.03,
 			pan:0,
 			envMul:2
 		);
@@ -162,30 +224,13 @@ Tdef(\stitchPar,
 )
 )
 
-Tdef(\stitch).play;
-Tdef(\stitchPar).play;
+~clearScreen.(80)
 
 
-//keyboard effects - default
-(Ndef(\keyboardEffects,
-	{
-		var in = In.ar(4,2);
-		in;
-}););
+Ndef(\samplerEffects).play
 
-
-//sampler effects - default
 (Ndef(\samplerEffects,
 	{
 		var in = In.ar(6,2);
-		in;
+		CombC.ar(in,1,0.4,3)
 }););
-
-
-BREAK IN CASE OF EMERGENCY
-BREAK IN CASE OF EMERGENCY
-BREAK IN CASE OF EMERGENCY
-BREAK IN CASE OF EMERGENCY
-BREAK IN CASE OF EMERGENCY
-*/
-/////////////////

@@ -1,4 +1,4 @@
-class Thread {                                              // create new class
+  class Thread {                                              // create new class
 
   ArrayList<Stitch> stitches = new ArrayList<Stitch>();      // Declaring the ArrayList, note the use of the syntax "<Stitch>" to indicate our intention to fill this ArrayList with Stitch objects
 
@@ -445,7 +445,7 @@ class Thread {                                              // create new class
           line(x, y, newX, newY);                  // draw stitch
           x = newX;                                // makes stitch end start point x for next stitch
           y = newY;                                 // makes stitch end start point x for next stitch
-          stroke(5, 255, 255);                     // set needle colour
+          stroke(needleColor);                     // set needle colour
           point(x, y);                             // needle position
           up = ! up;// makes boolean up opposite for next stitch
         }
