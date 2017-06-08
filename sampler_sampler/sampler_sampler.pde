@@ -46,8 +46,11 @@ import netP5.*;
 OscP5 oscP5;
 NetAddress supercollider;
 
+color needleColor;
+
+
 //choose betweeen "client" or "host" here
-String mode = "client";
+String mode = "host";
 
 Thread thread = new Thread();
 
@@ -59,29 +62,26 @@ int clientPort = 57120;
 
 int grid = 32;
 
-color needleColor;
-
 void setup() {
 
   frameRate(30);
   //size(1000, 1000);
   fullScreen();
+  needleColor = color(5,255,255);
   //start relevant OSC goodies
   //starting reciever on port 12000
   oscP5 = new OscP5(this, 12000);
   //starting sender to sclang's default port
   if (mode == "client"){
   supercollider = new NetAddress(clientIP, clientPort);
-  needleColor = color(255,0,0);
   } else if (mode == "host"){
   supercollider = new NetAddress(hostIP, hostPort);
-  needleColor = color(5,255,255);
   }
 
   // draw plain background
   background(255);
 
-  // set grid % 
+  // set grid %
   scale(grid);
 
   // dot grid
@@ -106,14 +106,22 @@ void draw() {
       noStroke();
       fill(150);
       ellipse(i, j, 0.1, 0.1);
+      stroke(66, 244, 238);
     }
   }
 
   thread.draw();
+
 }
 
 // key press event
 void keyPressed(KeyEvent e) {
+  if (e.getKey() == 'A') {undoStitch(grid);
+  OscMessage stitchMsg = new OscMessage("/hostUndo");
+  print("hkhhkhkhkjhjk");
+  stitchMsg.add("UNDO STITCH");
+  oscP5.send(stitchMsg, supercollider);
+}
   thread.moveChar(key, e);
 }
 
@@ -162,13 +170,58 @@ void mousePressed() {
   oscP5.send(stitchMsg, supercollider);
 }
 
+// function to undo last stitch
+void undoStitch(int scaler) {
+  background(255);
+  grid = scaler;
+  scale(scaler);
+  synchronized(thread.stitches) {
+    thread.stitches.remove(thread.stitches.size() - 1);
+    for (int i = 0; i <= width/grid; i ++) {
+      for (int j = 0; j <= height/grid; j ++) {
+        noStroke();
+        fill(150);
+        ellipse(i, j, 0.1, 0.1);
+      }
+    }
+  }
+  OscMessage stitchMsg = new OscMessage("/undoStitch");
+  stitchMsg.add("UNDO!");
+  oscP5.send(stitchMsg, supercollider);
+}
+
+//function to undo last stitch and re-scale acording to set scaler
+//a separate function to work with SuperCollider function so as not to feed back.
+void undoStitchSC(int scaler) {
+  background(255);
+  grid = scaler;
+  scale(scaler);
+  synchronized(thread.stitches) {
+    thread.stitches.remove(thread.stitches.size() - 1);
+    for (int i = 0; i <= width/grid; i ++) {
+      for (int j = 0; j <= height/grid; j ++) {
+        noStroke();
+        fill(150);
+        ellipse(i, j, 0.1, 0.1);
+      }
+    }
+  }
+}
+
+//void undoKey() {
+  //undoStitch(grid);
+  //OscMessage stitchMsg = new OscMessage("/hostUndo");
+  //stitchMsg.add("UNDO STITCH");
+  //oscP5.send(stitchMsg, supercollider);
+//}
+
 //handler for OSC messages. will be used to recieve stitching information from SuperCollider
 //it would be nice if this could take an array to do more complex modifiers
 void oscEvent(OscMessage theOscMessage) {
   //checks if the message is being recieved from SuperCollider using the address
   if (theOscMessage.checkAddrPattern("/stitchSC")==true) {
-    
-   
+
+
 
     //make an arrayList to hold the instructions to be sent to the stitch emulator
     ArrayList<String> instructions =   new ArrayList<String>();
@@ -181,132 +234,132 @@ void oscEvent(OscMessage theOscMessage) {
 
     //I NEED TO MAKE THIS SO THAT IT DOES NOT PASS SI AS ARGUMENT BECAUSE IT BREAKS
     if (theOscMessage.typetag().contains("ii") == true) {
-      
+
       int[] direction = new int[2];
       //print("yay");
-      
+
       //Direct assignment - inflexible
       //direction[0] = theOscMessage.get(0).intValue();
       //direction[1] = theOscMessage.get(1).intValue();
-      
+
       //generate array containing direction and any modifiers based on the send OSC message
       for (int i = 0; i < theOscMessage.typetag().length(); i++) {
         direction[i] = theOscMessage.get(i).intValue();
       }
-      
+
        //up
        if( direction[0] == 0 ) {
          if( direction[1] == 0){
-           //up 
+           //up
            thread.up(1, 1);
          } else if ( direction [1] == 1 ){
            //uplong
            thread.up(2, 1);
          }
         }
-        
+
         //upright
         if( direction[0] == 1 ) {
          if( direction[1] == 0){
-           //up 
+           //up
            thread.upRight(1, 1);
          } else if ( direction [1] == 1 ){
            //uplong
            thread.upRight(2, 1);
          }
         }
-        
+
         //right
-        
+
          if( direction[0] == 2 ) {
          if( direction[1] == 0){
-           //up 
+           //up
            thread.right(1, 1);
          } else if ( direction [1] == 1 ){
            //uplong
            thread.right(2, 1);
          }
         }
-        
-        
+
+
         //downright
-        
+
          if( direction[0] == 3 ) {
          if( direction[1] == 0){
-           //up 
+           //up
            thread.downRight(1, 1);
          } else if ( direction [1] == 1 ){
            //uplong
            thread.downRight(2, 1);
          }
         }
-        
-        
+
+
         //down
-        
+
          if( direction[0] == 4 ) {
          if( direction[1] == 0){
-           //up 
+           //up
            thread.down(1, 1);
          } else if ( direction [1] == 1 ){
            //uplong
            thread.down(2, 1);
          }
         }
-        
-        
+
+
         //downleft
-        
+
          if( direction[0] == 5 ) {
          if( direction[1] == 0){
-           //up 
+           //up
            thread.downLeft(1, 1);
          } else if ( direction [1] == 1 ){
            //uplong
            thread.downLeft(2, 1);
          }
         }
-        
-        
+
+
         //left
-        
+
                 if( direction[0] == 6 ) {
          if( direction[1] == 0){
-           //up 
+           //up
            thread.left(1, 1);
          } else if ( direction [1] == 1 ){
            //uplong
            thread.left(2, 1);
          }
         }
-        
-        
+
+
         //upleft
 
         if( direction[0] == 7 ) {
          if( direction[1] == 0){
-           //up 
+           //up
            thread.upLeft(1, 1);
          } else if ( direction [1] == 1 ){
            //uplong
            thread.upLeft(2, 1);
          }
         }
-        
 
 
 
 
-      
+
+
       //println(str(direction));
-      
+
     }
-      
-      
+
+
       //old string detecting code
       /*
       for (int i = 0; i < theOscMessage.typetag().length(); i++) {
-        
+
         //using the direction as a local variable so as not to compute it multiple times
          instructions.add(theOscMessage.get(i).stringValue());
          //check if the message contains relevant characters and send the relevant direction messages
@@ -377,9 +430,9 @@ void oscEvent(OscMessage theOscMessage) {
         }
       }
     }
-    
+
     */
-    
+
     if (theOscMessage.typetag().contains("si")) {
       if (theOscMessage.get(0).stringValue().equals("CLEAR")) {
         int size = theOscMessage.get(1).intValue();
