@@ -430,6 +430,8 @@ class Thread {                                              // create new class
       strokeWeight(0.1);                        // set stroke weight
       synchronized(stitches) {
         for (Stitch stitch : stitches) {           // for loop - for (init; test; update) - calling from stitch array
+          stroke(0, 0, 0);                    // covers old needle position
+          point(x, y);
           newX = x + stitch.x;                // decaler var newX (line endpoint) x pos + values from move function (see stitch object arguments)
           newY = y + stitch.y;                // decaler var newY (line endpoint) y pos + values from move function (see stitch object arguments)
           stroke(up ? color(0, 250) : color(200, 80));     // set stroke colour depending on boolean up true/false
@@ -442,7 +444,9 @@ class Thread {                                              // create new class
            }                          */
           line(x, y, newX, newY);                  // draw stitch
           x = newX;                                // makes stitch end start point x for next stitch
-          y = newY;                                // makes stitch end start point x for next stitch
+          y = newY;                                 // makes stitch end start point x for next stitch
+          stroke(5, 255, 255);                     // set needle colour
+          point(x, y);                             // needle position
           up = ! up;// makes boolean up opposite for next stitch
         }
       }
