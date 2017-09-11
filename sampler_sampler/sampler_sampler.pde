@@ -50,7 +50,7 @@ color needleColor;
 
 
 //choose betweeen "client" or "host" here
-String mode = "host";
+String mode = "client";
 
 Thread thread = new Thread();
 
