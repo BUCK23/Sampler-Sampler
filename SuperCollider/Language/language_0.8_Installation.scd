@@ -14,8 +14,12 @@
 //List of metapattern values - these will be useful for figuring out which
 ~metaPatterns = List.new;
 
-//this saves the current pattern
+//this saves the current pattern, IF there are less than x (in this case currently 40) patterns. If there is more, then remove the first pattern and replace it with the new one
 ~savePattern = {
+	if ( ~stitchHistory.size > 40, {
+		"Max Patterns Reached! - Replacing Oldest Pattern".postln;
+		~stitchHistory.removeAt(0);
+	});
 	if ( ~stitchHistory[~stitchHistory.size-1].size == 0,
 		{
 			"METAPATTERN CREATED! Created from patterns: ".post;
@@ -47,7 +51,6 @@
 		}
 		,{
 	~stitchHistory.add(List.new);
-	"".postln;
 	"Pattern ".post;
 	(~stitchHistory.size.asInt-2).post;
 	" Saved!".postln;
@@ -155,9 +158,6 @@
 
 	},'/stitchSampler');
 };
-
-
-
 
 ~keyboardResponder = {
 	arg freq = 100, amp = 0.1, atk = 0.4, rel = 1, pan = 0, envMul = 3;

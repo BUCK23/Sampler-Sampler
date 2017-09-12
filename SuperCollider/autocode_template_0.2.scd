@@ -2,12 +2,12 @@
 
 //Load microlanguage, note: only do this at the START of your session
 (
-	s.waitForBoot{{
+s.waitForBoot{{
 	s.sync;
 	~theFunc = {File("~/src/github/Sampler-Sampler/SuperCollider/savedStitches/stitches.txt".standardizePath,"r").readAllString.interpret};
 	//this takes AGES to load
 	s.sync;
-	("Language/language_0.8.scd").loadRelative;
+	("Language/language_0.8_Installation.scd").loadRelative;
 	~keyboardResponder.();
 	~sampleResponder.();
 	~hostPatternControl.();
@@ -60,13 +60,26 @@
 	(
 		Tdef(\stitchClearer,
 			{ loop ({
-			//code about the list generator goes here
+				//wait for a certain amount of time, mediated by the size of the stitch history array, maybe this could be more dynamic.
+				(60-(~stitchHistory.size/2)).wait;
+				//remove first entry
+				if ( ~stitchHistory.size > 1,
+					{
+						//remove first (oldest) entry
+						~stitchHistory.removeAt(0);
+						"Oldest Pattern Removed!".postln;
+					},
+					{
+						~stitchHistory[0] = List.new;
+					}
+				);
 			})
 			}
 		)
-	)
+	);
 	s.sync;
 	Tdef(\stitch).play;
+	Tdef(\stitchClearer).play;
 	"done".postln;
-	}.fork;}
+}.fork;}
 )

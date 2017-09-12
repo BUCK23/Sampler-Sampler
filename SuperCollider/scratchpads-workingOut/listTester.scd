@@ -11,12 +11,13 @@
 (
 if ( ~numL.size > 1,
 	{
-		~numL.removeAt(~numL.size-1);
+		~numL.removeAt(0);
 		~numL;
 	},
 	{
 		~numL[0] = List.new;
 	}
+
 )
 )
 

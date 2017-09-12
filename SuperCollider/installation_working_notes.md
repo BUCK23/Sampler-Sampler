@@ -29,8 +29,20 @@ Maybe:
 - Time patterns are allowed to remain is made more dynamic
 - A 'Max number' of patterns added to the function to prevent silly spamming while making sure that patterns don't disappear too quickly.
 
+Both done, although the 'time' of patterns is not the best.
+
 ## Get a more efficient autocoding setup, which is a bit more interesting or dynamic than simple randomness
+
+- In order to do this i'm first going to need to figure out a schema for making things more interesting.
+- Toni sent me this paper about blackwork embroidery and maths and that might be a place to look first
+- L-systems are a possiblity just to get something more organic, and rules would be easy enough to auto-generate
 
 ## Get an 'autocode' setting on a transparent overlay
 
 ## Make a shell script that will open SCSynth, start up the .scd file, then open up the Processing sketch.
+
+a simple 'sclang file.scd' doesn't work, it just jams and says that waitForBoot is not actually working
+
+It's to do with DDWSnippets and the document class, I need to remove DDWSnippets while i'm going to be working with sampler/sampler
+
+Then it 'just works'
