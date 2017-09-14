@@ -6,6 +6,7 @@ int started = 0; //sets start point
 Grid grid;      // declare Grid object
 Thread thread;  // declare Thread object
 Stitch stitch;  // declare Stitch object
+Needle needle; // declare Needle object
 
 void setup() {
 
@@ -14,6 +15,7 @@ void setup() {
   noCursor();
   grid = new Grid();                  // make initial Grid object
   thread = new Thread();              //make initial Thread object
+  needle = new Needle();
   
   //GPIO.pinMode(4, GPIO.INPUT);    // initalise GPIO pins for buttons (need to check button set up on raspberry pi)
   //GPIO.pinMode(5, GPIO.INPUT);
@@ -23,11 +25,15 @@ void draw() {
   background(255);      // resets background
   grid.drawGrid();      // draws grid
 
+
   // draw all stitches
   for (int i = 0; i < stitches.size(); i++) {
     Stitch stitch = stitches.get(i);
     stitch.drawStitches();
-    print ("STITCH" + i);
+  }
+  
+  if (mousePressed == true){
+      needle.drawNeedle();
   }
   
   thread.drawThread();      // draws thread
