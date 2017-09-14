@@ -24,7 +24,7 @@ class Stitch {
       stroke(200, 80);
     }
     
-    strokeWeight(3);
+    strokeWeight(6);
         
     line (sx1, sy1, sx2, sy2);
       }

@@ -7,7 +7,7 @@ class Grid{
     for (int j = 0; j <= height/gridSize; j ++) {
       noStroke();
       fill(150);
-      ellipse(i*gridSize, j*gridSize, 4, 4);
+      ellipse(i*gridSize, j*gridSize, 8, 8);
     }
   }
 

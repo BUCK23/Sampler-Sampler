@@ -2,8 +2,8 @@ class Needle {
   
   void drawNeedle() {
     noStroke();
-    fill (100, 100, 100);
-    ellipse (mouseX, mouseY, 50, 50);
+    fill (59, 160, 175);
+    ellipse (mouseX, mouseY, 10, 10);
 
 }
 }

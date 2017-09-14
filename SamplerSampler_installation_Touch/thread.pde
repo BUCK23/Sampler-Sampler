@@ -37,7 +37,7 @@ class Thread {
     }
 
     // draws thread line
-    strokeWeight(3);
+    strokeWeight(6);
     line(tx1, ty1, tx2, ty2);
   }
 }
