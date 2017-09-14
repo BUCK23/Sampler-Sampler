@@ -1,7 +1,17 @@
+/*
+
+This version created to work in accordance with a SuperCollider sampling setup
+
+*/
+
 import oscP5.*;
 import netP5.*;
 OscP5 oscP5;
 NetAddress supercollider;
+// maybe this don't have to be global, but this is the previous x and y co-ordinates
+float prevX = 0.0;
+float prevY = 0.0;
+
 
 int gridSize = 32; //set grid size.
 ArrayList<Stitch> stitches = new ArrayList<Stitch>(); // create an empty array list
@@ -63,10 +73,10 @@ void keyPressed(KeyEvent e) {
   //dump ALL data from Processing to SuperCollider
   for (int i = 0; i < stitches.size(); i++){
     OscMessage stitchMsg = new OscMessage("/stitchInfo");
-    stitchMsg.add(stitches.get(i).sx1);
-    stitchMsg.add(stitches.get(i).sx2);
-    stitchMsg.add(stitches.get(i).sy1);
-    stitchMsg.add(stitches.get(i).sy2);
+    stitchMsg.add(stitches.get(i).sx1/gridSize);
+    stitchMsg.add(stitches.get(i).sy1/gridSize);
+    stitchMsg.add(stitches.get(i).sx2/gridSize);
+    stitchMsg.add(stitches.get(i).sy2/gridSize);
     stitchMsg.add(stitches.get(i).topStitch);
     oscP5.send(stitchMsg, supercollider);
   };
@@ -89,16 +99,30 @@ Then a two-way communication protocol with SuperCollider
 void oscEvent(OscMessage theOscMessage) {
   //checks if the message is being recieved from SuperCollider using the address
   if (theOscMessage.checkAddrPattern("/stitchSC")==true) {
-    //check the message is the right format, and if so log it to an array
-    if (theOscMessage.typetag().contains("ffffi") == true){
-      float[] direction = new float[5];
-      //this would be done with a for loop but as the final value is a bool being transformed to an int i'll just leave it like this
-      direction[0] = theOscMessage.get(0).floatValue();
-      direction[1] = theOscMessage.get(1).floatValue();
-      direction[2] = theOscMessage.get(2).floatValue();
-      direction[3] = theOscMessage.get(3).floatValue();
-      direction[4] = float(theOscMessage.get(4).intValue());
-      println(direction);
+    //check the message is the right format, and if so stitch it!
+    if (theOscMessage.typetag().equals("ffffi") == true){
+      stitches.add(new Stitch(
+      //adding the previous X and Y co-ordinates in order to 
+      (theOscMessage.get(0).floatValue()+prevX)*gridSize, 
+      (theOscMessage.get(1).floatValue()+prevY)*gridSize, 
+      (theOscMessage.get(2).floatValue()+prevX)*gridSize, 
+      (theOscMessage.get(3).floatValue()+prevY)*gridSize, 
+      boolean(theOscMessage.get(4).intValue())
+      ));  // add stitch objects to array
+      //save the final set of co-ordinates to be used later for 'tiling' stitches
+    }
+    if (theOscMessage.typetag().equals("ffffii") == true){
+      stitches.add(new Stitch(
+      (theOscMessage.get(0).floatValue()+prevX)*gridSize, 
+      (theOscMessage.get(1).floatValue()+prevY)*gridSize, 
+      (theOscMessage.get(2).floatValue()+prevX)*gridSize, 
+      (theOscMessage.get(3).floatValue()+prevY)*gridSize, 
+      boolean(theOscMessage.get(4).intValue())
+      ));
+      //if there's another int (meaning this is the last index), re-start the prevX value?
+      //THIS IS NOT RIGHT. This needs to be the last X and Y values of the final stitch that has been made.
+      prevX = (stitches.get(stitches.size()-1).sx2)/gridSize;
+      prevY = (stitches.get(stitches.size()-1).sy2)/gridSize;
     }
   }
 }
