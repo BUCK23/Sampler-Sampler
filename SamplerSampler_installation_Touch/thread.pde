@@ -22,14 +22,14 @@ class Thread {
         started = 1;
       };
       
-      tx2 = (mouseX/gridSize)*gridSize;
-      ty2 = (mouseY/gridSize)*gridSize;
+      tx2 = gridSize * (int)round((float)mouseX/gridSize);
+      ty2 = gridSize * (int)round((float)mouseY/gridSize); 
     } else {
-      tx2 = int(tx2/gridSize)*gridSize;
-      ty2 = int(ty2/gridSize)*gridSize;
+      tx2 = gridSize * (int)round((float)tx2/gridSize); 
+      ty2 = gridSize * (int)round((float)ty2/gridSize); 
     }
-
-//sets thread colour top/bottom
+   
+//sets thread colour top/bottom 
        if (threadTop == true) {
       stroke(0, 250);
     } else {
