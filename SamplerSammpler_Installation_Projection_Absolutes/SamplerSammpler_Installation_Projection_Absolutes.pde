@@ -1,3 +1,11 @@
+/*
+This sketch is an attempt to get the stitching system working with only changes in direction rather than absolute co-ordinates
+
+
+
+*/
+
+
 import oscP5.*;
 import netP5.*;
 OscP5 oscP5;
@@ -157,8 +165,8 @@ void oscEvent(OscMessage theOscMessage) {
         endPrevX = theOscMessage.get(2).floatValue() + (prevX);
         endPrevY = theOscMessage.get(3).floatValue() + (prevY);   
         //iterate the prevX
-        prevX = (startPrevX - endPrevX) + (prevX);
-        prevY = (startPrevY - endPrevY) + (prevY);
+        prevX = (endPrevX - startPrevX) + (prevX);
+        prevY = (endPrevY - startPrevY) + (prevY);
         println(prevX);
       }
     }
