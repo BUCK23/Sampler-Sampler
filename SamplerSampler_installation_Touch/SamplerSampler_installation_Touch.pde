@@ -1,4 +1,8 @@
 import processing.io.*;
+import oscP5.*;
+import netP5.*;
+OscP5 oscP5;
+NetAddress supercollider;
 int gridSize = 60; //set grid size.
 ArrayList<Stitch> stitches = new ArrayList<Stitch>(); // create an empty array list
 int started = 0; //sets start point
@@ -11,6 +15,8 @@ Needle needle; // declare Needle object
 void setup() {
 
   fullScreen();
+  oscP5 = new OscP5(this, 12000);
+  supercollider = new NetAddress("192.168.0.80", 57120);
   noFill();
   noCursor();
   grid = new Grid();                  // make initial Grid object
@@ -66,7 +72,25 @@ void mouseReleased() {
     //}
 //}
 
-void keyPressed() {
-      stitches.clear(); // clears array
-      started = 0; //resets start point
-    }
+void keyPressed(KeyEvent e) {
+  //make SuperCollider listen for info
+  OscMessage stitchListener = new OscMessage("/stitchListener");
+  stitchListener.add(1);
+  oscP5.send(stitchListener, supercollider);
+  //dump ALL data from Processing to SuperCollider
+  for (int i = 0; i < stitches.size(); i++) {
+    OscMessage stitchMsg = new OscMessage("/stitchInfo");
+    stitchMsg.add(stitches.get(i).sx1/gridSize);
+    stitchMsg.add(stitches.get(i).sy1/gridSize);
+    stitchMsg.add(stitches.get(i).sx2/gridSize);
+    stitchMsg.add(stitches.get(i).sy2/gridSize);
+    stitchMsg.add(stitches.get(i).topStitch);
+    oscP5.send(stitchMsg, supercollider);
+  };
+  //make SuperCollider stop listening for info (hopefully it has built a big array by now)
+  OscMessage stitchUnlistener = new OscMessage("/stitchListener");
+  stitchUnlistener.add(0);
+  oscP5.send(stitchUnlistener, supercollider); 
+  stitches.clear();// create an empty array list
+  started = 0;
+}
