@@ -4,6 +4,8 @@
 ~processing = NetAddr.new("127.0.0.1",12000);
 )
 
+OSCFunc.trace
+
 // Receives a dump of stitch information
 (
 OSCdef(\makeStitchArray,
@@ -39,7 +41,9 @@ OSCdef(\stitchListener,
 					}
 				);
 				//append an extra integer to the end message, so that Processing knows to log the final x/y values
-				~stitchHistory[~stitchHistory.size-1][~stitchHistory[~stitchHistory.size-1].size-1].add(0)
+				~stitchHistory[~stitchHistory.size-1][~stitchHistory[~stitchHistory.size-1].size-1].add("end");
+				//append an extra string to the start message so that processing knows to recognise this as the starting co-ords
+				~stitchHistory[~stitchHistory.size-1][0].add("start");
 				"no longer logging data".postln;
 		})
 },'/stitchListener')

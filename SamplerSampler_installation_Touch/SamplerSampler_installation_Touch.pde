@@ -6,7 +6,8 @@ NetAddress supercollider;
 int gridSize = 60; //set grid size.
 ArrayList<Stitch> stitches = new ArrayList<Stitch>(); // create an empty array list
 int started = 0; //sets start point
-
+float prevX = 0.0;
+float prevY = 0.0;
 Grid grid;      // declare Grid object
 Thread thread;  // declare Thread object
 Stitch stitch;  // declare Stitch object
@@ -16,7 +17,7 @@ void setup() {
 
   fullScreen();
   oscP5 = new OscP5(this, 12000);
-  supercollider = new NetAddress("192.168.0.80", 57120);
+  supercollider = new NetAddress("127.0.0.1", 57120);
   noFill();
   noCursor();
   grid = new Grid();                  // make initial Grid object
@@ -52,6 +53,13 @@ void mouseReleased() {
   thread.threadTop = ! thread.threadTop;                                                        // changes stitch colour
 }
 
+
+void clearStitches() {
+  prevX = 0.0;
+  prevY = 0.0;
+  stitches.clear();
+}
+
 // ------------------------------------------------------------------------------------
 
 // SEND AND CLEAR BUTTONS
@@ -80,17 +88,22 @@ void keyPressed(KeyEvent e) {
   //dump ALL data from Processing to SuperCollider
   for (int i = 0; i < stitches.size(); i++) {
     OscMessage stitchMsg = new OscMessage("/stitchInfo");
-    stitchMsg.add(stitches.get(i).sx1/gridSize);
-    stitchMsg.add(stitches.get(i).sy1/gridSize);
-    stitchMsg.add(stitches.get(i).sx2/gridSize);
-    stitchMsg.add(stitches.get(i).sy2/gridSize);
+    stitchMsg.add((stitches.get(i).sx1 - prevX)/gridSize);
+    stitchMsg.add((stitches.get(i).sy1 - prevY)/gridSize);
+    stitchMsg.add((stitches.get(i).sx2 - prevX)/gridSize);
+    stitchMsg.add((stitches.get(i).sy2 - prevY)/gridSize);
     stitchMsg.add(stitches.get(i).topStitch);
     oscP5.send(stitchMsg, supercollider);
+    prevX = stitches.get(i).sx1;
+    prevY = stitches.get(i).sx2;
+    //only clear after the for loop has run, because 'reasons'
+    if (i == stitches.size() - 1) {
+     clearStitches(); 
+    }
   };
   //make SuperCollider stop listening for info (hopefully it has built a big array by now)
   OscMessage stitchUnlistener = new OscMessage("/stitchListener");
   stitchUnlistener.add(0);
   oscP5.send(stitchUnlistener, supercollider); 
-  stitches.clear();// create an empty array list
   started = 0;
 }
