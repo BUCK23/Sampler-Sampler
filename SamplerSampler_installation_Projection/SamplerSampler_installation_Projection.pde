@@ -42,7 +42,7 @@ void draw() {
     //print ("STITCH" + i);
   }
 
-  thread.drawThread();      // draws thread
+  //thread.drawThread();      // draws thread
 }
 
 void mouseReleased() {
@@ -108,6 +108,8 @@ void oscEvent(OscMessage theOscMessage) {
   //print(theOscMessage.typetag());
   //checks if the message is being recieved from SuperCollider using the address
   if (theOscMessage.checkAddrPattern("/stitchSC")==true) {
+    thread.tx1 = theOscMessage.get(0).floatValue();
+    thread.ty1 = theOscMessage.get(1).floatValue();
     started = 1;
     //check the message is the right format, and if so stitch it!
     if (theOscMessage.typetag().equals("ffffi") == true) {
@@ -122,7 +124,7 @@ void oscEvent(OscMessage theOscMessage) {
       //save the final set of co-ordinates to be used later for 'tiling' stitches
     }
     if (theOscMessage.typetag().equals("ffffis") == true) {
-      println(theOscMessage.get(5).stringValue());
+      //println(theOscMessage.get(5).stringValue());
       stitches.add(new Stitch(
         (theOscMessage.get(0).floatValue()+(prevX))*gridSize, 
         (theOscMessage.get(1).floatValue()+(prevY))*gridSize, 
@@ -141,12 +143,6 @@ void oscEvent(OscMessage theOscMessage) {
          prevX = (startPrevX - endPrevX) + (prevX);
          prevY = (startPrevY - endPrevY) + (prevY);
         }
-        println(prevX);
-        println(prevY);
-      //if there's another int (meaning this is the last index), re-start the prevX value?
-      //THIS IS NOT RIGHT. This needs to be the last X and Y values of the final stitch that has been made.
-      //this is adding too much, what I need to find is the difference between the STARTING and ENDING co-ords
-      //println(stitches.get(stitches.size()-1));
     }
   }
 }
