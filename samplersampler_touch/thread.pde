@@ -19,6 +19,7 @@ class Thread {
     if (mousePressed) {    
       if (started == 0) {    // sets first stitch start point
         stitches.add(new Stitch((mouseX/gridSize)*gridSize, (mouseY/gridSize)*gridSize, (mouseX/gridSize)*gridSize, (mouseY/gridSize)*gridSize, thread.threadTop));
+        print ("First stitch " + stitches.size());
         started = 1;
       };
       

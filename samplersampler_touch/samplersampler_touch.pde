@@ -23,9 +23,11 @@ void setup() {
   grid = new Grid();                  // make initial Grid object
   thread = new Thread();              //make initial Thread object
   needle = new Needle();
-  
-  //GPIO.pinMode(4, GPIO.INPUT);    // initalise GPIO pins for buttons (need to check button set up on raspberry pi)
-  //GPIO.pinMode(5, GPIO.INPUT);
+
+  // pinMode set up for buttons
+  //GPIO.pinMode(12, GPIO.INPUT);    
+  //GPIO.pinMode(16, GPIO.INPUT);
+  //GPIO.pinMode(26, GPIO.INPUT);
 }
 
 void draw() {
@@ -38,11 +40,11 @@ void draw() {
     Stitch stitch = stitches.get(i);
     stitch.drawStitches();
   }
-  
-  if (mousePressed == true){
-      needle.drawNeedle();
+
+  if (mousePressed == true) {
+    needle.drawNeedle();
   }
-  
+
   thread.drawThread();      // draws thread
 }
 
@@ -50,53 +52,92 @@ void mouseReleased() {
   thread.tx2 = int(thread.tx2/gridSize)*gridSize;        // gives end points for stitch on mouse release        
   thread.ty2 = int(thread.ty2/gridSize)*gridSize;  
   stitches.add(new Stitch(thread.tx1, thread.ty1, thread.tx2, thread.ty2, thread.threadTop));  // add stitch objects to array
+  print ("Add " + stitches.size());
   thread.threadTop = ! thread.threadTop;                                                        // changes stitch colour
 }
 
 
-void clearStitches() {
-  prevX = 0.0;
-  prevY = 0.0;
-  stitches.clear();
-}
+//void clearStitches() {
+// prevX = 0.0;
+//prevY = 0.0;
+//stitches.clear();
+//}
 
 // ------------------------------------------------------------------------------------
 
-// SEND AND CLEAR BUTTONS
+// SEND, CLEAR and UNDO BUTTONS
 
 // Sends Sample Button
-//void sendSample(){
- //if (GPIO.digitalRead(4) == GPIO.HIGH) {
-    //SEND SAMPLE SUPERCOLIDER 
-   // stitches.clear();
-    //}
-//}
-
+/*void sendSample() {
+ if (GPIO.digitalRead(26) == GPIO.HIGH) {
+ //make SuperCollider listen for info
+ OscMessage stitchListener = new OscMessage("/stitchListener");
+ stitchListener.add(1);
+ oscP5.send(stitchListener, supercollider);
+ //dump ALL data from Processing to SuperCollider
+ for (int i = 0; i < stitches.size(); i++) {
+ OscMessage stitchMsg = new OscMessage("/stitchInfo");
+ stitchMsg.add((stitches.get(i).sx1/gridSize) - (stitches.get(i).sx2/gridSize));
+ stitchMsg.add((stitches.get(i).sy1/gridSize) - (stitches.get(i).sy2/gridSize));
+ stitchMsg.add(stitches.get(i).topStitch);
+ oscP5.send(stitchMsg, supercollider);
+ };
+ //make SuperCollider stop listening for info (hopefully it has built a big array by now)
+ OscMessage stitchUnlistener = new OscMessage("/stitchListener");
+ stitchUnlistener.add(0);
+ oscP5.send(stitchUnlistener, supercollider); 
+ started = 0;
+ stitches.clear();
+ }
+ }*/
 
 // clear screen button press
-//void clearButton(){
- //if (GPIO.digitalRead(5) == GPIO.HIGH) {
-   // stitches.clear();
-    //}
-//}
+/*void clearStitches() {
+ if (GPIO.digitalRead(16) == GPIO.HIGH) {
+ prevX = 0.0;
+ prevY = 0.0;
+ stitches.clear();
+ }
+ }*/
 
+// undo button press
+//void undoButton() {
+//if (GPIO.digitalRead(12) == GPIO.HIGH) {
 void keyPressed(KeyEvent e) {
-  //make SuperCollider listen for info
-  OscMessage stitchListener = new OscMessage("/stitchListener");
-  stitchListener.add(1);
-  oscP5.send(stitchListener, supercollider);
-  //dump ALL data from Processing to SuperCollider
-  for (int i = 0; i < stitches.size(); i++) {
-    OscMessage stitchMsg = new OscMessage("/stitchInfo");
-    stitchMsg.add((stitches.get(i).sx1/gridSize) - (stitches.get(i).sx2/gridSize));
-    stitchMsg.add((stitches.get(i).sy1/gridSize) - (stitches.get(i).sy2/gridSize));
-    stitchMsg.add(stitches.get(i).topStitch);
-    oscP5.send(stitchMsg, supercollider);
-  };
-  //make SuperCollider stop listening for info (hopefully it has built a big array by now)
-  OscMessage stitchUnlistener = new OscMessage("/stitchListener");
-  stitchUnlistener.add(0);
-  oscP5.send(stitchUnlistener, supercollider); 
-  started = 0;
-  stitches.clear();
+
+  for (int i = 0; i < stitches.size(); i++) {    // stitch array counter
+    stitch = stitches.get(i);
+    if (i >= 0) {
+      stitches.remove(stitches.size()-1);
+      print ("Dlete " + stitches.size());
+    thread.tx1 = stitch.sx1;            // start position for x thread line
+    thread.ty1 = stitch.sy1;            // start position for y thread line
+    thread.tx2 = stitch.sx2;            // start position for x thread line
+    thread.ty2 = stitch.sy2;            // start position for y thread line
+      //thread.threadTop = ! thread.threadTop;  
+    }
+  }
 }
+
+
+
+/*void keyPressed(KeyEvent e) {
+ //make SuperCollider listen for info
+ OscMessage stitchListener = new OscMessage("/stitchListener");
+ stitchListener.add(1);
+ oscP5.send(stitchListener, supercollider);
+ //dump ALL data from Processing to SuperCollider
+ for (int i = 0; i < stitches.size(); i++) {
+ OscMessage stitchMsg = new OscMessage("/stitchInfo");
+ stitchMsg.add((stitches.get(i).sx1/gridSize) - (stitches.get(i).sx2/gridSize));
+ stitchMsg.add((stitches.get(i).sy1/gridSize) - (stitches.get(i).sy2/gridSize));
+ stitchMsg.add(stitches.get(i).topStitch);
+ oscP5.send(stitchMsg, supercollider);
+ };
+ //make SuperCollider stop listening for info (hopefully it has built a big array by now)
+ OscMessage stitchUnlistener = new OscMessage("/stitchListener");
+ stitchUnlistener.add(0);
+ oscP5.send(stitchUnlistener, supercollider); 
+ started = 0;
+ stitches.clear();
+ }*/
