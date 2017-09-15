@@ -59,6 +59,8 @@ OSCdef(\stitchListener,
 		//iterate over the data as a local variable
 		data.size.do({
 			|i|
+
+			/*
 			//adjusted to send two values to Processing - I think, the first 0 just queries the list.
 			//Modifier in brackets to allow a negative number to be used on patterns - REMOVED TO SIMPLIFY FOR NOW.
 			//For the purposes of the installation the modifiers might not be necessary.
@@ -72,14 +74,15 @@ OSCdef(\stitchListener,
 				~processing.sendMsg('/stitchSC',data[i][0],data[i][1],data[i][2],data[i][3],data[i][4],data[i][5]);
 			});
 			//data[i].postln;
+
+			*/
+			~processing.sendMsg('/stitchSC',data[i][0],data[i][1],data[i][3]);
 			period.wait;
 		});
 		~noHistory = 0;
 	}).play;
 };
 )
-
-~stitchHistory[~stitchHistory.size-1][~stitchHistory[~stitchHistory.size-1].size-1].size
 
 (
 ~loopPattern = {
