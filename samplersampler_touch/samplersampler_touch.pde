@@ -12,6 +12,7 @@ Grid grid;      // declare Grid object
 Thread thread;  // declare Thread object
 Stitch stitch;  // declare Stitch object
 Needle needle; // declare Needle object
+int undoButtonOn = 0;
 
 void setup() {
 
@@ -25,7 +26,7 @@ void setup() {
   needle = new Needle();
 
   // pinMode set up for buttons
-  //GPIO.pinMode(12, GPIO.INPUT);    
+  GPIO.pinMode(12, GPIO.INPUT);    
   //GPIO.pinMode(16, GPIO.INPUT);
   //GPIO.pinMode(26, GPIO.INPUT);
 }
@@ -46,6 +47,19 @@ void draw() {
   }
 
   thread.drawThread();      // draws thread
+  if (GPIO.digitalRead(12) == GPIO.HIGH) {
+   if (undoButtonOn == 0) {
+    undoButton(); 
+    undoButtonOn = 1;
+   }
+  }
+  
+  if (GPIO.digitalRead(12) == GPIO.LOW) {
+    undoButtonOn = 0;
+  }
+  }
+  
+  
 }
 
 void mouseReleased() {
@@ -101,9 +115,7 @@ void mouseReleased() {
  }*/
 
 // undo button press
-//void undoButton() {
-//if (GPIO.digitalRead(12) == GPIO.HIGH) {
-void keyPressed(KeyEvent e) {
+void undoButton() {
 
   for (int i = 0; i < stitches.size(); i++) {    // stitch array counter
     stitch = stitches.get(i);
