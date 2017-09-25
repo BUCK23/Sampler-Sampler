@@ -12,7 +12,6 @@ Grid grid;      // declare Grid object
 Thread thread;  // declare Thread object
 Stitch stitch;  // declare Stitch object
 Needle needle; // declare Needle object
-int undoButtonOn = 0;
 
 void setup() {
 
@@ -47,21 +46,10 @@ void draw() {
   }
 
   thread.drawThread();      // draws thread
-  if (GPIO.digitalRead(12) == GPIO.HIGH) {
-   if (undoButtonOn == 0) {
-    undoButton(); 
-    undoButtonOn = 1;
-   }
-  }
-  
-  if (GPIO.digitalRead(12) == GPIO.LOW) {
-    undoButtonOn = 0;
-  }
-  }
-  
   
 }
 
+// sets the stitch from drawn thread
 void mouseReleased() {
   thread.tx2 = int(thread.tx2/gridSize)*gridSize;        // gives end points for stitch on mouse release        
   thread.ty2 = int(thread.ty2/gridSize)*gridSize;  
@@ -70,6 +58,19 @@ void mouseReleased() {
   thread.threadTop = ! thread.threadTop;                                                        // changes stitch colour
 }
 
+// UNDO BUTTON
+void undoButton() {
+ 
+   if (GPIO.digitalRead(12) == GPIO.HIGH) {
+  if (stitches.size() > 0) {
+      stitches.remove(stitches.size()-1);
+    thread.tx1 = stitch.sx1;            // start position for x thread line
+    thread.ty1 = stitch.sy1;            // start position for y thread line
+    thread.tx2 = stitch.sx2;            // start position for x thread line
+    thread.ty2 = stitch.sy2;            // start position for y thread line
+    }
+  }
+}
 
 //void clearStitches() {
 // prevX = 0.0;
@@ -114,24 +115,6 @@ void mouseReleased() {
  }
  }*/
 
-// undo button press
-void undoButton() {
-
-  for (int i = 0; i < stitches.size(); i++) {    // stitch array counter
-    stitch = stitches.get(i);
-    if (i >= 0) {
-      stitches.remove(stitches.size()-1);
-      print ("Dlete " + stitches.size());
-    thread.tx1 = stitch.sx1;            // start position for x thread line
-    thread.ty1 = stitch.sy1;            // start position for y thread line
-    thread.tx2 = stitch.sx2;            // start position for x thread line
-    thread.ty2 = stitch.sy2;            // start position for y thread line
-      //thread.threadTop = ! thread.threadTop;  
-    }
-  }
-}
-
-
 
 /*void keyPressed(KeyEvent e) {
  //make SuperCollider listen for info
@@ -153,3 +136,16 @@ void undoButton() {
  started = 0;
  stitches.clear();
  }*/
+ 
+ 
+   /*if (GPIO.digitalRead(12) == GPIO.HIGH) {
+   if (undoButtonOn == 0) {
+    undoButton(); 
+    undoButtonOn = 1;
+   }
+  }
+  
+  if (GPIO.digitalRead(12) == GPIO.LOW) {
+    undoButtonOn = 0;
+  }
+  }*/
