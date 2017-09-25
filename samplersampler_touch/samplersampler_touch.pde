@@ -27,7 +27,7 @@ void setup() {
   needle = new Needle();
 
   time = millis();    // sets start time to millis for button debounce
-  debounce = 1000;    // debounce length
+  debounce = 200;    // debounce length
 
   // pinMode set up for buttons
   GPIO.pinMode(12, GPIO.INPUT);    
@@ -75,7 +75,6 @@ void mouseReleased() {
   thread.tx2 = int(thread.tx2/gridSize)*gridSize;        // gives end points for stitch on mouse release        
   thread.ty2 = int(thread.ty2/gridSize)*gridSize;  
   stitches.add(new Stitch(thread.tx1, thread.ty1, thread.tx2, thread.ty2, thread.threadTop));  // add stitch objects to array
-  print ("Add " + stitches.size());
   thread.threadTop = ! thread.threadTop;                                                        // changes stitch colour
 }
 
@@ -87,6 +86,7 @@ void undoButton() {
     thread.ty1 = stitch.sy1;            // start position for y thread line
     thread.tx2 = stitch.sx2;            // start position for x thread line
     thread.ty2 = stitch.sy2;            // start position for y thread line
+    thread.threadTop = ! thread.threadTop; 
   }
 }
 
