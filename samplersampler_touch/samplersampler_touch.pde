@@ -12,6 +12,8 @@ Grid grid;      // declare Grid object
 Thread thread;  // declare Thread object
 Stitch stitch;  // declare Stitch object
 Needle needle; // declare Needle object
+int debounce; //declare debounce variable
+int time;  // decalre timer variable for debounce
 
 void setup() {
 
@@ -24,16 +26,18 @@ void setup() {
   thread = new Thread();              //make initial Thread object
   needle = new Needle();
 
+  time = millis();    // sets start time to millis for button debounce
+  debounce = 1000;    // debounce length
+
   // pinMode set up for buttons
   GPIO.pinMode(12, GPIO.INPUT);    
-  //GPIO.pinMode(16, GPIO.INPUT);
-  //GPIO.pinMode(26, GPIO.INPUT);
+  GPIO.pinMode(16, GPIO.INPUT);
+  GPIO.pinMode(26, GPIO.INPUT);
 }
 
 void draw() {
   background(255);      // resets background
   grid.drawGrid();      // draws grid
-
 
   // draw all stitches
   for (int i = 0; i < stitches.size(); i++) {
@@ -41,12 +45,29 @@ void draw() {
     stitch.drawStitches();
   }
 
-  if (mousePressed == true) {
+  if (mousePressed == true) {  // draws a dot for finger position, ie the "needle"
     needle.drawNeedle();
   }
 
   thread.drawThread();      // draws thread
-  
+
+  // triggers undoButton function 
+  if ((GPIO.digitalRead(12) == GPIO.LOW) && (millis() - time >= debounce)) {
+    undoButton();
+    time = millis();
+  }
+
+  // triggers clearScreen function    
+  if ((GPIO.digitalRead(16) == GPIO.LOW) && (millis() - time >= debounce)) {
+    clearStitches();
+    time = millis();
+  }
+
+  // triggers sendSample function
+  if ((GPIO.digitalRead(26) == GPIO.LOW) && (millis() - time >= debounce)) {
+    sendSample();
+    time = millis();
+  }
 }
 
 // sets the stitch from drawn thread
@@ -60,27 +81,37 @@ void mouseReleased() {
 
 // UNDO BUTTON
 void undoButton() {
- 
-   if (GPIO.digitalRead(12) == GPIO.HIGH) {
   if (stitches.size() > 0) {
-      stitches.remove(stitches.size()-1);
+    stitches.remove(stitches.size()-1);
     thread.tx1 = stitch.sx1;            // start position for x thread line
     thread.ty1 = stitch.sy1;            // start position for y thread line
     thread.tx2 = stitch.sx2;            // start position for x thread line
     thread.ty2 = stitch.sy2;            // start position for y thread line
-    }
   }
 }
 
-//void clearStitches() {
-// prevX = 0.0;
-//prevY = 0.0;
-//stitches.clear();
-//}
+//CLEAR SCREEN
+void clearStitches() {
+  prevX = 0.0;
+  prevY = 0.0;
+  stitches.clear();
+}
+
+// SEND SAMPLE TO SUPERCOLLIDER (AND CLEAR SCREEN)
+void sendSample() {
+
+  // not sure what needs to go in here for supercollider 
+  //but I've copied the clearStitches function just to make 
+  // sure the button works
+
+  prevX = 0.0;
+  prevY = 0.0;
+  stitches.clear();
+}
 
 // ------------------------------------------------------------------------------------
 
-// SEND, CLEAR and UNDO BUTTONS
+// SUPERCOLLIDER STUFF!! 
 
 // Sends Sample Button
 /*void sendSample() {
@@ -106,16 +137,6 @@ void undoButton() {
  }
  }*/
 
-// clear screen button press
-/*void clearStitches() {
- if (GPIO.digitalRead(16) == GPIO.HIGH) {
- prevX = 0.0;
- prevY = 0.0;
- stitches.clear();
- }
- }*/
-
-
 /*void keyPressed(KeyEvent e) {
  //make SuperCollider listen for info
  OscMessage stitchListener = new OscMessage("/stitchListener");
@@ -136,16 +157,3 @@ void undoButton() {
  started = 0;
  stitches.clear();
  }*/
- 
- 
-   /*if (GPIO.digitalRead(12) == GPIO.HIGH) {
-   if (undoButtonOn == 0) {
-    undoButton(); 
-    undoButtonOn = 1;
-   }
-  }
-  
-  if (GPIO.digitalRead(12) == GPIO.LOW) {
-    undoButtonOn = 0;
-  }
-  }*/
