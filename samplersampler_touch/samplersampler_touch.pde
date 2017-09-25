@@ -95,6 +95,7 @@ void clearStitches() {
   prevX = 0.0;
   prevY = 0.0;
   stitches.clear();
+  started = 0;
 }
 
 // SEND SAMPLE TO SUPERCOLLIDER (AND CLEAR SCREEN)
@@ -107,6 +108,7 @@ void sendSample() {
   prevX = 0.0;
   prevY = 0.0;
   stitches.clear();
+  started = 0;
 }
 
 // ------------------------------------------------------------------------------------
