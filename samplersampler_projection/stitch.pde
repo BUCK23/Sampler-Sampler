@@ -25,9 +25,10 @@ class Stitch {
     }
     
     strokeWeight(3);
-    line ((sx2)*gridSize, (sy2)*gridSize, ((sx1)+(sx2))*gridSize, ((sy1)+(sy2))*gridSize);
-    
-   // println("line = "+((sx1)*gridSize) + "   " + ((sy1)*gridSize) + "   "+ ((sx2)*gridSize) + "   "+ ((sy2)*gridSize));
+    // this works
+    line ((sx2)*gridSize, (sy2)*gridSize, ((sx2)+(sx1))*gridSize, ((sy2)+(sy1))*gridSize);
+    //line (((sx2)+(sx1))*gridSize, ((sy2)+(sy1))*gridSize, (sx2)*gridSize, (sy2)*gridSize);
+   //println("line = "+((sx1)*gridSize) + "   " + ((sy1)*gridSize) + "   "+ ((sx2)*gridSize) + "   "+ ((sy2)*gridSize));
     
     }
 }

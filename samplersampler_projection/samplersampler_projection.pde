@@ -19,6 +19,15 @@ Grid grid;      // declare Grid object
 //Thread thread;  // declare Thread object
 Stitch stitch;  // declare Stitch object
 
+/*
+
+PROBLEMS:
+
+- Stitches currently put back onto canvas backwards and upside down, i can imagine this is to do with certain values being inverted for some reason that i don't quite understand yet, 
+maybe it'll be solved on the SuperCollider Side, i dunno.
+
+*/
+
 void setup() {
   oscP5 = new OscP5(this, 12000);
   supercollider = new NetAddress("127.0.0.1", 57120);
@@ -103,17 +112,14 @@ void oscEvent(OscMessage theOscMessage) {
     started = 1;
     //if the stitch is going to be outside the boundary of the screen, then reset it and clear the screen.
 
-    //removed for debugging
-    /*
-    if ((theOscMessage.get(0).floatValue()+(prevX))*gridSize < 0 || (theOscMessage.get(0).floatValue()+(prevX))*gridSize > width)
+    if ((theOscMessage.get(0).floatValue()+(xPos))*gridSize < 0 || (theOscMessage.get(0).floatValue()+(xPos))*gridSize > width)
     {
       clearScreen();
     }
-    if ((theOscMessage.get(1).floatValue()+(prevY))*gridSize < 0 || (theOscMessage.get(1).floatValue()+(prevY))*gridSize > height)
+    if ((theOscMessage.get(1).floatValue()+(yPos))*gridSize < 0 || (theOscMessage.get(1).floatValue()+(yPos))*gridSize > height)
     {
       clearScreen();
     }
-    */
     
     //check the message is the right format, and if so stitch it!
     if (theOscMessage.typetag().equals("ffi") == true) {
@@ -129,7 +135,7 @@ void oscEvent(OscMessage theOscMessage) {
       //save the final set of co-ordinates to be used later for 'tiling' stitches
         xPos = xPos+(theOscMessage.get(0).floatValue());
         yPos = yPos+(theOscMessage.get(1).floatValue());
-        println(xPos+ "    "+ yPos);
+        //println(xPos+ "    "+ yPos);
     }
     
     

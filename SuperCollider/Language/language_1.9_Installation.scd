@@ -2,9 +2,7 @@
 ~logging = 0;
 ~stitchHistory = List.new;
 ~processing = NetAddr.new("127.0.0.1",12000);
-)
-
-OSCFunc.trace
+);
 
 // Receives a dump of stitch information
 (
@@ -14,10 +12,10 @@ OSCdef(\makeStitchArray,
 
 		if ( ~logging != 0 , {
 			//dump the contents of the message to an array inside the ~stitchHistory list
-			~stitchHistory[~stitchHistory.size-1].add([msg[1],msg[2],msg[3],msg[4],msg[5]])
+			~stitchHistory[~stitchHistory.size-1].add([msg[1],msg[2],msg[3]])
 		})
 },'/stitchInfo')
-)
+);
 
 (
 OSCdef(\stitchListener,
@@ -47,7 +45,7 @@ OSCdef(\stitchListener,
 				"no longer logging data".postln;
 		})
 },'/stitchListener')
-)
+);
 
 (
 ~playPattern = {
@@ -60,6 +58,7 @@ OSCdef(\stitchListener,
 		data.size.do({
 			|i|
 
+			//old language
 			/*
 			//adjusted to send two values to Processing - I think, the first 0 just queries the list.
 			//Modifier in brackets to allow a negative number to be used on patterns - REMOVED TO SIMPLIFY FOR NOW.
@@ -76,13 +75,13 @@ OSCdef(\stitchListener,
 			//data[i].postln;
 
 			*/
-			~processing.sendMsg('/stitchSC',data[i][0],data[i][1],data[i][3]);
+			~processing.sendMsg('/stitchSC',(data[i][0]) * -1,(data[i][1]) * -1,data[i][2]);
 			period.wait;
 		});
 		~noHistory = 0;
 	}).play;
 };
-)
+);
 
 (
 ~loopPattern = {

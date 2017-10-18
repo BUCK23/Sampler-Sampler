@@ -2,7 +2,7 @@
 
 //Load microlanguage, note: only do this at the START of your session
 (
-("Language/language_0.6.scd").loadRelative;
+("Language/language_1.9_Installation.scd").loadRelative;
 ~keyboardResponder.();
 ~sampleResponder.();
 ~hostPatternControl.();
