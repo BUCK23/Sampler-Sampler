@@ -78,11 +78,13 @@ void draw() {
     // NOTE: This needs to be scaled to grid dots, because i'm going to be making this on a very big screen
     if (prevMouseX != mouseX || prevMouseY != mouseY) {
       OscMessage mousePosition = new OscMessage("/mousePosition");
+      // I need to not send mouse position here, but send the thread length.
       mousePosition.add(mouseX - clickedMouseX);
       mousePosition.add(mouseY - clickedMouseY);
       mousePosition.add(gridSize);
+      mousePosition.add(trigID);
       oscP5.send(mousePosition, supercollider);
-      println((mouseX/gridSize));
+      println(stitch.sx1);
     }
 
     //log previous values of mouse position
@@ -125,7 +127,7 @@ void mouseReleased() {
   oscMousePressed.add(trigID);
   oscP5.send(oscMousePressed, supercollider);
   //adds to the trigID
-  trigID++;
+  trigID = (trigID + 1)%5000 ;
 }
 
 // UNDO BUTTON
