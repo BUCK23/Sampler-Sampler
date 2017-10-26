@@ -17,7 +17,7 @@ Tdef(\stitch,
 			pattern:0,
 			period:0.5,
 			num:1,
-			delay:5,
+			delay:1,
 			transform:0,
 			multiplier:1,
 		);
@@ -30,3 +30,5 @@ Tdef(\stitch).play
 OSCFunc.trace
 
 NetAddr.langPort
+
+~stitchHistory

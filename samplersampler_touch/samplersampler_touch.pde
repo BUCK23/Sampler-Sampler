@@ -64,13 +64,22 @@ void draw() {
   if (mousePressed == true) {  // draws a dot for finger position, ie the "needle"
     needle.drawNeedle();
 
-    // Grab the mouse position to be used for sonification
+    // Grab the position from which the thread starts to be used for sonification
     if (isMouseAlreadyPressed == 0) {
-      clickedMouseX = mouseX;
-      clickedMouseY = mouseY;
+      clickedMouseX = int((thread.tx2 - thread.tx1));
+      clickedMouseY = int((thread.ty2 - thread.ty1));
       isMouseAlreadyPressed = 1;
       OscMessage oscMousePressed = new OscMessage("/mousePressed");
+      //length of thread
+      oscMousePressed.add((thread.tx2 - thread.tx1));
+      oscMousePressed.add((thread.ty2 - thread.ty1));
+      //size of grid for calculation
+      oscMousePressed.add(gridSize);
+      //unique ID for stitch
       oscMousePressed.add(trigID);
+      //initial position for determining addition of frequency to represent stitches in two dimensions
+      oscMousePressed.add(thread.tx1);
+      oscMousePressed.add(thread.ty1);
       oscP5.send(oscMousePressed, supercollider);
     }
 
@@ -79,17 +88,21 @@ void draw() {
     if (prevMouseX != mouseX || prevMouseY != mouseY) {
       OscMessage mousePosition = new OscMessage("/mousePosition");
       // I need to not send mouse position here, but send the thread length.
-      mousePosition.add(mouseX - clickedMouseX);
-      mousePosition.add(mouseY - clickedMouseY);
+      mousePosition.add((thread.tx2 - thread.tx1));
+      mousePosition.add((thread.ty2 - thread.ty1));
       mousePosition.add(gridSize);
       mousePosition.add(trigID);
+      mousePosition.add(thread.tx1);
+      mousePosition.add(thread.ty1);
       oscP5.send(mousePosition, supercollider);
-      println(stitch.sx1);
+      //println(stitch.sx1);
     }
 
     //log previous values of mouse position
     prevMouseX = mouseX;
     prevMouseY = mouseY;
+    
+    //println((thread.tx2 - thread.tx1) + " " + (thread.ty2 - thread.ty1));
   }
 
   thread.drawThread();      // draws thread
@@ -127,7 +140,7 @@ void mouseReleased() {
   oscMousePressed.add(trigID);
   oscP5.send(oscMousePressed, supercollider);
   //adds to the trigID
-  trigID = (trigID + 1)%5000 ;
+  trigID = int(random(5000)) ;
 }
 
 // UNDO BUTTON

@@ -2,6 +2,7 @@
 ~logging = 0;
 ~stitchHistory = List.new;
 ~processing = NetAddr.new("127.0.0.1",12000);
+~superCollider = NetAddr.new("127.0.0.1",NetAddr.langPort)
 );
 
 // Receives a dump of stitch information
@@ -21,6 +22,11 @@ OSCdef(\makeStitchArray,
 OSCdef(\stitchListener,
 	{
 		|msg, time, addr, recvPort, sw, stitch|
+
+		if ( ~stitchHistory.size > 40, {
+		"Max Patterns Reached! - Replacing Oldest Pattern".postln;
+		~stitchHistory.removeAt(0);
+		});
 
 		if (msg[1] == 1,
 			{
@@ -75,7 +81,10 @@ OSCdef(\stitchListener,
 			//data[i].postln;
 
 			*/
+			//send stitch data to Processing to be displayed there
+			//this will volley back another set of info
 			~processing.sendMsg('/stitchSC',(data[i][0]) * -1,(data[i][1]) * -1,data[i][2]);
+			//~superCollider.sendMsg('/stitchSC',(data[i][0]) * -1,(data[i][1]) * -1,data[i][2]);
 			period.wait;
 		});
 		~noHistory = 0;
