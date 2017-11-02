@@ -36,7 +36,7 @@ Tdef(\stitch,
 	{ loop ({
 		~loopPattern.(
 			pattern:rrand(0,~stitchHistory.size-1),
-			period:0.1,
+			period:1,
 			num:1,
 			delay:1,
 			transform:0,
@@ -250,22 +250,134 @@ SynthDef(\sampleSound,
 OSCFunc.trace
 Tdef(\stitch).play
 
-// this is a simple sonification that uses the length of the stitch to open up a low pass filter, and uses
+// this is a simple sonification that uses the length of the stitch to open up a low pass filter, and uses the position of the stitches to control the frequency of the two waves
+
+// example: [ /sampledStitchInfo, -1, -7, 40, 0, 40, 22 ]
+
+// a fundamental issue in this system is that the grid lines are not zeroed.
+// what I want is for the frequencies to get more dissonant the further out they are from the center?
+// So each stitch sounds similar, or is 'a sample', but the content of the sample changes
+
+~fundamental + ((-4 + 12) * (~fundamental))
+
+//original as of 2nd November
 (
 OSCdef(\sampleReceiver,
 	{
 		|msg|
 		Synth(\sampleSound,[
-			\freq1,(~fundamental + ((msg[5] + (msg[1])) * (~fundamental / 2))).post,
-			"       ".post;
-			\freq2,(~fundamental + ((msg[6] + (msg[2])) * (~fundamental / 2))).postln,
+			\freq1,(~fundamental + ((msg[5] + (msg[1])) * (~fundamental / 2))),
+			\freq2,(~fundamental + ((msg[6] + (msg[2])) * (~fundamental / 2))),
 			\lpf, (~fundamental + ((msg[1].abs + msg[2].abs) * (~fundamental * 3)))
 		]
-		)
+		);
+		("message1 = "+msg[1]).post;
+		("  message2 = "+msg[2]).postln;
 },'/sampledStitchInfo')
 );
 
 
+//Maybe modify it using MIDI notes, it's a bit of a brutal sell, but it could work?
+/*
 
-// So the original mouseclick sound uses the X and Y position to adjust the frequency of freq1 & freq2, and the length of the stitch to adjust the level of the LPF
-Synth(\sampleSound)
+NOTES 2nd November 2017
+
+The parameters we need to account for:
+
+X and Y Position and Length to be reflected in frequency
+Length of stitch to be reflected in envelope length
+Overall position to be reflected in the LPF?
+
+Maybe reperesent it using two oscillators?
+
+*/
+(
+OSCdef(\sampleReceiver,
+	{
+		|msg|
+		Synth(\sampleSound,[
+			\freq1,40 + (msg[1] + msg[5]).midicps,
+			\freq2,40 + (msg[2] + msg[6]).midicps,
+			\lpf, (~fundamental + ((msg[1].abs + msg[2].abs) * (~fundamental * 3))),
+			\
+		]
+		);
+		("message1 = "+msg[1]).post;
+		("  message2 = "+msg[2]).postln;
+},'/sampledStitchInfo')
+);
+
+// ATTEMPT TWO: Use two oscillators.
+// They probably need to be a bit more complicated than this.
+// This also makes all pitches totally relative - it uses the
+
+(
+SynthDef(\stitchX,
+	{
+		arg freq = 440, amp = 0.5, atk = 0.01, rel = 0.4, pos = 0, sus = 0;
+		var sig,env;
+		sig = SinOsc.ar(freq,0,1);
+		env = EnvGen.ar(Env.linen(atk,sus,rel),1,doneAction:2);
+		sig = sig * env;
+		Out.ar(0,Pan2.ar(sig,pos,amp))
+	}
+).add
+)
+
+(
+SynthDef(\stitchY,
+	{
+		arg freq = 440, amp = 0.5, atk = 0.01, rel = 0.4, pos = 0, sus = 0;
+		var sig,env;
+		sig = SinOsc.ar(freq,0,1);
+		env = EnvGen.ar(Env.linen(atk,sus,rel),1,doneAction:2);
+		sig = sig * env;
+		Out.ar(0,Pan2.ar(sig,pos,amp))
+	}
+).add
+)
+
+// A new version of the sampleReceiver that uses two identical oscillators to map across an X/Y axis
+//this sounds horrible
+(
+OSCdef(\sampleReceiver,
+	{
+		|msg|
+		Synth(\stitchX,
+			[\freq, (60 + (msg[1])).midicps]
+		);
+		Synth(\stitchY,
+			[\freq, (60 + (msg[2])).midicps]
+		);
+},'/sampledStitchInfo')
+);
+
+//maybe try this version which uses fundamental frequencies across the grid, then uses grid position to calculate selective low pass filtering on both oscillators
+
+//attempt 2
+
+(
+SynthDef(\stitchX,
+	{
+		arg freq = 440, amp = 0.5, atk = 0.01, rel = 0.4, pos = 0, sus = 0;
+		var sig,env;
+		sig = SawDPW.ar(freq,0,1);
+		env = EnvGen.ar(Env.linen(atk,sus,rel),1,doneAction:2);
+		sig = sig * env;
+		Out.ar(0,Pan2.ar(sig,pos,amp))
+	}
+).add
+)
+
+(
+SynthDef(\stitchY,
+	{
+		arg freq = 440, amp = 0.5, atk = 0.01, rel = 0.4, pos = 0, sus = 0;
+		var sig,env;
+		sig = SinOsc.ar(freq,0,1);
+		env = EnvGen.ar(Env.linen(atk,sus,rel),1,doneAction:2);
+		sig = sig * env;
+		Out.ar(0,Pan2.ar(sig,pos,amp))
+	}
+).add
+)
