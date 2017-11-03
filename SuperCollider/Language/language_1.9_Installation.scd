@@ -2,7 +2,8 @@
 ~logging = 0;
 ~stitchHistory = List.new;
 ~processing = NetAddr.new("127.0.0.1",12000);
-~superCollider = NetAddr.new("127.0.0.1",NetAddr.langPort)
+~superCollider = NetAddr.new("127.0.0.1",57120)
+~scale = Scale.choose
 );
 
 // Receives a dump of stitch information
@@ -83,7 +84,10 @@ OSCdef(\stitchListener,
 			*/
 			//send stitch data to Processing to be displayed there
 			//this will volley back another set of info
+			//this is multiplied by minus one because the data was being logged backwards
 			~processing.sendMsg('/stitchSC',(data[i][0]) * -1,(data[i][1]) * -1,data[i][2]);
+			~superCollider.sendMsg('/stitchSC',(data[i][0]) * -1,(data[i][1]) * -1,data[i][2]);
+			//data[i].postln;
 			//~superCollider.sendMsg('/stitchSC',(data[i][0]) * -1,(data[i][1]) * -1,data[i][2]);
 			period.wait;
 		});
@@ -106,9 +110,19 @@ OSCdef(\stitchListener,
 		//wait for as long as it takes to play the pattern - this seems inefficient and i should probably just re-write the function with ~playPattern within it, but maybe not.
 		((~stitchHistory[pattern].size)*period).wait;
 		//send the modifiers
-		~processing.sendMsg('/stitchSC',dir1,len1);
-		~processing.sendMsg('/stitchSC',dir2,len2);
+		//NO LONGER NEEDED
+		//~processing.sendMsg('/stitchSC',dir1,len1);
+		//~processing.sendMsg('/stitchSC',dir2,len2);
 		delay.wait;
 	})
 };
+);
+
+(
+//switch active scale when screen is cleared
+OSCdef(\screenClear,
+	{
+		~scale = Scale.choose;
+	},'/screenCleared'
+)
 )

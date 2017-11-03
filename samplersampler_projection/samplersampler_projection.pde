@@ -25,6 +25,7 @@ Stitch stitch;  // declare Stitch object
  
  - Stitches currently put back onto canvas backwards and upside down, i can imagine this is to do with certain values being inverted for some reason that i don't quite understand yet, 
  maybe it'll be solved on the SuperCollider Side, i dunno.
+ - This was solved be reversing all stitches SuperCollider side
  
  */
 
@@ -73,6 +74,9 @@ void clearScreen() {
   //center the current stitch
   xPos = (width/gridSize)/2;
   yPos = (height/gridSize)/2;
+  OscMessage screenCleared = new OscMessage("/screenCleared");
+  screenCleared.add("Cleared!");
+  oscP5.send(screenCleared,supercollider);
 }
 
 void keyPressed(KeyEvent e) {
@@ -106,12 +110,12 @@ void keyPressed(KeyEvent e) {
  */
 
 void oscEvent(OscMessage theOscMessage) {
-  print(theOscMessage.typetag());
+  println(theOscMessage.typetag());
   //checks if the message is being recieved from SuperCollider using the address
   if (theOscMessage.checkAddrPattern("/stitchSC")==true) {
     started = 1;
     //if the stitch is going to be outside the boundary of the screen, then reset it and clear the screen.
-
+    //TODO: There's an error here that is causing a nullPointerException
     if ((theOscMessage.get(0).floatValue()+(xPos))*gridSize < 0 || (theOscMessage.get(0).floatValue()+(xPos))*gridSize > width)
     {
       clearScreen();

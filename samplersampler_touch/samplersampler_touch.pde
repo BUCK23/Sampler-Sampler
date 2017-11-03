@@ -29,11 +29,19 @@ int prevMouseY;
 // this sets the ID of the triggered synth
 int trigID = int(random(5000));
 
+// this string controls whether signals are being sent externally or internally.
+// this then feeds into an if statement in setup to control the IP address information is sent to
+String send = "internal";
+
 void setup() {
 
   fullScreen();
   oscP5 = new OscP5(this, 12000);
+  if ( send == "internal" ){
   supercollider = new NetAddress("127.0.0.1", 57120);
+  } else if (send == "external") {
+  supercollider = new NetAddress("192.168.100.101", 57120);
+  }
   noFill();
   noCursor();
   grid = new Grid();                  // make initial Grid object
