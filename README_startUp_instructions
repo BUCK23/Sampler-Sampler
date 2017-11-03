@@ -1,0 +1,18 @@
+NOTE: this has only been tested with Jessie-Pixel Raspian & Processing 3.3
+
+# You need to edit the config file that determines what the x-session does on boot.
+
+# Use nano to open the file:
+
+`sudo nano ~/.config/lxsession/LXDE-pi/autostart`
+
+# On a new line at the bottom of the file add:
+
+`@bash /*path*/*to*/startUp.sh`
+
+# e.g. in our set up:
+
+`@bash /home/pi/startUp.sh`
+
+# ctrl+x to save file
+# reboot to test.

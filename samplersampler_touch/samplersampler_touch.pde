@@ -14,7 +14,7 @@ Stitch stitch;  // declare Stitch object
 Needle needle; // declare Needle object
 int debounce; //declare debounce variable
 int time;  // decalre timer variable for debounce
-int gpioEnable = 0; //NOTE: THIS IS USED TO DISABLE/ENABLE GPIO FUNCTIONALITY TO USE THIS SKETCH ON A LAPTOP, NOT RPI
+int gpioEnable = 1; //NOTE: THIS IS USED TO DISABLE/ENABLE GPIO FUNCTIONALITY TO USE THIS SKETCH ON A LAPTOP, NOT RPI
 
 // Variables for sonifying mouse stitch movement
 // When the mouse is pressed down, log the X and Y position to clickedMouseX and clickedMouseY.
