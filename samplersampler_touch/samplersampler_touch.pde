@@ -14,7 +14,7 @@ Stitch stitch;  // declare Stitch object
 Needle needle; // declare Needle object
 int debounce; //declare debounce variable
 int time;  // decalre timer variable for debounce
-int gpioEnable = 1; //NOTE: THIS IS USED TO DISABLE/ENABLE GPIO FUNCTIONALITY TO USE THIS SKETCH ON A LAPTOP, NOT RPI
+int gpioEnable = 0; //NOTE: THIS IS USED TO DISABLE/ENABLE GPIO FUNCTIONALITY TO USE THIS SKETCH ON A LAPTOP, NOT RPI
 
 // Variables for sonifying mouse stitch movement
 // When the mouse is pressed down, log the X and Y position to clickedMouseX and clickedMouseY.
@@ -31,7 +31,7 @@ int trigID = int(random(5000));
 
 // this string controls whether signals are being sent externally or internally.
 // this then feeds into an if statement in setup to control the IP address information is sent to
-String send = "internal";
+String send = "external";
 
 void setup() {
 

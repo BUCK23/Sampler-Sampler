@@ -2,7 +2,7 @@
 ~logging = 0;
 ~stitchHistory = List.new;
 ~processing = NetAddr.new("127.0.0.1",12000);
-~superCollider = NetAddr.new("127.0.0.1",57120)
+~superCollider = NetAddr.new("127.0.0.1",57120);
 ~scale = Scale.choose
 );
 

@@ -74,6 +74,7 @@ void clearScreen() {
   //center the current stitch
   xPos = (width/gridSize)/2;
   yPos = (height/gridSize)/2;
+  //sends a message notifying SuperCollider 
   OscMessage screenCleared = new OscMessage("/screenCleared");
   screenCleared.add("Cleared!");
   oscP5.send(screenCleared,supercollider);

@@ -26,6 +26,9 @@ Data being sent from Processing:
 ~hostPatternControl.();
 )
 
+//4th October: load new lang
+("../Language/language_1.9_1_Installation.scd").loadRelative;
+
 //recall stitches
 ~stitchHistory = File("~/src/github/Sampler-Sampler/SuperCollider/savedStitches/stitches_install.txt".standardizePath,"r").readAllString.interpret
 
@@ -155,6 +158,8 @@ OSCdef(\released,
 )
 
 
+
+
 //sonification of patterns
 // a basic sonification engine
 /*
@@ -195,7 +200,7 @@ OSCdef(\stitchResponder,
 		|msg, time, addr, recvPort|
 		Synth(\stitchSonifier,[\rel,0.1,\sus,0.1]);
 		msg.postln;
-	},'/stitchSC')
+},'/stitchSC')
 )
 )
 
@@ -485,18 +490,18 @@ List[ [ 0, 0, false, start ], [ -2, 2, false ], [ -2, -2, true ], [ 2, -2, false
 //I actually don't know what the issue is, it's being displayed as this in the processing post window
 
 ERROR @ OscP5 ERROR. an error occured while forwarding an OscMessage
- to a method in your program. please check your code for any
+to a method in your program. please check your code for any
 possible errors that might occur in the method where incoming
- OscMessages are parsed e.g. check for casting errors, possible
- nullpointers, array overflows ... .
+OscMessages are parsed e.g. check for casting errors, possible
+nullpointers, array overflows ... .
 method in charge : oscEvent  java.lang.reflect.InvocationTargetException
 ss### [2017/11/3 9:13:41]
 
 ERROR @ OscP5 ERROR. an error occured while forwarding an OscMessage
- to a method in your program. please check your code for any
+to a method in your program. please check your code for any
 possible errors that might occur in the method where incoming
- OscMessages are parsed e.g. check for casting errors, possible
- nullpointers, array overflows ... .
+OscMessages are parsed e.g. check for casting errors, possible
+nullpointers, array overflows ... .
 method in charge : oscEvent  java.lang.reflect.InvocationTargetException
 
 //this error doesn't actually make any sense given the fact that /stitchSC seems to be only sending floats and ints...
@@ -542,17 +547,17 @@ Maybe use X/Y or the four corners of the screen to control switching between fou
 //x and y accept values scaled from -1 to 1.
 SynthDef(\stitchSample,
 	{
-	arg freq = 100, amp = 1, atk = 0.01, sus = 0, rel = 0.3, x = 0, y = 0;
-	var sig, env;
-	sig = Splay.ar([
+		arg freq = 100, amp = 1, atk = 0.01, sus = 0, rel = 0.3, x = 0, y = 0;
+		var sig, env;
+		sig = Splay.ar([
 			SinOscFB.ar(freq,1,y.linlin(-1,1,0,1)),
 			Pulse.ar(freq,0.2,y.linlin(-1,1,1,0)),
 			Saw.ar(freq,x.linlin(-1,1,1,0)),
 			LFTri.ar(freq,0,x.linlin(-1,1,0,1))
-	],1,1,0,true) * amp;
-	env = EnvGen.ar(Env.linen(atk,sus,rel,1),1,doneAction:2);
-	sig = sig * env;
-	Out.ar(0,sig)
+		],1,1,0,true) * amp;
+		env = EnvGen.ar(Env.linen(atk,sus,rel,1),1,doneAction:2);
+		sig = sig * env;
+		Out.ar(0,sig)
 }).add;
 )
 
@@ -649,18 +654,1088 @@ if x = 1 & y = -1 -> UPRIGHT
 //Okay, need to figure out how to translate X/Y Co-ords BACK into directions -_-
 //Everything goes full circle after all
 
+
+//DOWN
+~superCollider.sendMsg('/stitchSC',0.0,1.0,1)
+//UP
+~superCollider.sendMsg('/stitchSC',0.0,-1.0,1)
+//RIGHT
+~superCollider.sendMsg('/stitchSC',1.0,0.0,1)
+//LEFT
+~superCollider.sendMsg('/stitchSC',-1.0,0.0,1)
+
+//DOWNLEFT
+~superCollider.sendMsg('/stitchSC',-1.0,1.0,1)
+//UPLEFT
+~superCollider.sendMsg('/stitchSC',-1.0,-1.0,1)
+
+//DOWNRIGHT
+~superCollider.sendMsg('/stitchSC',1.0,1.0,1)
+//UPRIGHT
+~superCollider.sendMsg('/stitchSC',1.0,-1.0,1)
+
+
+
+//a testing message
+~superCollider.sendMsg('/stitchSC',2,-5,1)
+
+/*
+//Okay, so this takes the messages sent to SuperCollider, and parses them out as directions. We're back to square one, but we know more.
 (
+OSCdef(\test,
+{
+|msg|
+
+//if x = 0
+if(msg[1] == 0,
+{
+
+//DOWN
+if (msg[2] >= 1,
+{("DOWN"+msg[2]+"STEPS").postln}
+);
+
+//UP
+if (msg[2] <= -1,
+{("UP"+msg[2].abs+"steps").postln}
+);
+});
+
+//if x >= 1
+if (msg[1] >= 1,
+{
+//RIGHT
+if (msg[2] == 0,
+{("RIGHT"+(msg[1])+"STEPS").postln}
+);
+
+//DOWNRIGHT
+if (msg[2] >= 1,
+{("DOWNRIGHT"+msg[1]+msg[2]+"STEPS").postln}
+);
+
+//UPRIGHT
+if (msg[2] <= -1,
+{("UPRIGHT"+msg[1]+msg[2].abs+"STEPS").postln}
+)
+});
+
+//if x <= -1
+if (msg[1] <= -1,
+{
+//LEFT
+if (msg[2] == 0,
+{("LEFT"+(msg[1].abs)+"STEPS").postln}
+);
+
+//DOWNLEFT
+if (msg[2] >= 1,
+{("DOWNLEFT"+msg[1]+msg[2]+"STEPS").postln}
+);
+
+//UPLEFT
+if (msg[2] <= -1,
+{("UPLEFT"+msg[1]+msg[2].abs+"STEPS").postln}
+)
+})
+},'/'
+)
+)
+*/
+
+//back to this SynthDef
+(
+//x and y accept values scaled from -1 to 1.
+SynthDef(\stitchSample,
+	{
+		arg freq = 100, amp = 1, atk = 0.01, sus = 0, rel = 0.3, x = 0, y = 0;
+		var sig, env;
+		sig = Splay.ar([
+			SinOscFB.ar(freq,1,y.linlin(-1,1,0,1)),
+			Pulse.ar(freq,0.2,y.linlin(-1,1,1,0)),
+			Saw.ar(freq,x.linlin(-1,1,1,0)),
+			LFTri.ar(freq,0,x.linlin(-1,1,0,1))
+		],1,1,0,true) * amp;
+		env = EnvGen.ar(Env.linen(atk,sus,rel,1),1,doneAction:2);
+		sig = sig * env;
+		Out.ar(0,sig)
+}).add;
+)
+
+Tdef(\stitch).play
+
+Synth(\stitchSample)
+
+//turning this into a thing that plays scales.
+//TODO: PITCH DIAGONALS CORRECTLY - MAYBE WITH QUARTER TONES?
+//This does, however, produce a complete scale(!!!!)
+//4th November Checkpoint
+(
+//these are set up clockwise
+var up = 0, upright = 1, right = 2, downright = 3, down = 4, downleft = 5, left = 6, upleft = 7, x = 0, y = 0;
 OSCdef(\test,
 	{
 		|msg|
+
+		//set x and y values according to position on canvas at the start of the stitch. Should be easy enough to do, based on the information sent as a packet from Processing
+		//Xlen, Ylen, gridSize, ID, newX, newY
+		//msg.postln;
+
+		//TODO:
+
+		//YOU NOW NEED TO FIGURE OUT HOW TO TRANSLATE GRID POSITION INTO X/Y AXIS FROM -1 to 1 TO TRANSLATE THEM INTO X AND Y CROSSFADES. DO THIS NOW!
+
+		x = ((msg[5] - msg[1]) / msg[3]).linlin(0,2,-1,1);
+		y = ((msg[6] - msg[2]) / msg[3]).linlin(0,2,-1,1);
+		("x="+x+"y="+y).postln;
+
+
+		//if x = 0
 		if(msg[1] == 0,
 			{
-				if (msg[2] <= 1,
-					{"DOWN".postln}
 
-		)
-	},'/stitchSC'
+				//DOWN
+				if (msg[2] >= 1,
+					{//("DOWN"+msg[2]+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(down,40.midicps,1),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+						);
+					}
+				);
+
+				//UP
+				if (msg[2] <= -1,
+					{//("UP"+msg[2].abs+"steps").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(up,40.midicps,msg[2].abs),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+						);
+					}
+				);
+		});
+
+		//if x >= 1
+		if (msg[1] >= 1,
+			{
+				//RIGHT
+				if (msg[2] == 0,
+					{//("RIGHT"+(msg[1])+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(right,40.midicps,1),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				);
+
+				//DOWNRIGHT
+				if (msg[2] >= 1,
+					{//("DOWNRIGHT"+msg[1]+msg[2]+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(downright,40.midicps,1),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				);
+
+				//UPRIGHT
+				if (msg[2] <= -1,
+					{//("UPRIGHT"+msg[1]+msg[2].abs+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(upright,40.midicps,1),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				)
+		});
+
+		//if x <= -1
+		if (msg[1] <= -1,
+			{
+				//LEFT
+				if (msg[2] == 0,
+					{//("LEFT"+(msg[1].abs)+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(left,40.midicps,1),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				);
+
+				//DOWNLEFT
+				if (msg[2] >= 1,
+					{//("DOWNLEFT"+msg[1]+msg[2]+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(downleft,40.midicps,1),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				);
+
+				//UPLEFT
+				if (msg[2] <= -1,
+					{//("UPLEFT"+msg[1]+msg[2].abs+"STEPS";
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(upleft,40.midicps,1),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				)
+		})
+	},'/sampledStitchInfo'
 )
 )
 
-	//WHAT YOU NEED HERE IS THEN A THING THAT TAKES SURPLUS VALUES OVER 1, TAKES ONE OFF OF THEM AND TRIMS THEM DOWN IN ORDER TO DETEMINE HOW FAR OFF OF 1 THEY ARE!!!
+//THIS WORKS!!!!! - Together they form a complete sonidication, but we now need to handle the octaves.
+//Also there's not enough differentiation in the types of waves being used here.
+
+(
+//x and y accept values scaled from -1 to 1.
+SynthDef(\stitchSample,
+	{
+		arg freq = 100, amp = 1, atk = 0.01, sus = 0, rel = 0.3, x = 0, y = 0;
+		var sig, env;
+		sig = Splay.ar([
+			//a linexp is used here in an attempt to get more wave differentiation
+			//what I really want is quiet in the middle, loud at the edges
+			SinOscFB.ar(freq,1,(y.linlin(-1,1,0.01,1)).linexp(0.01,1,0.01,1) - 0.01),
+			Pulse.ar(freq,0.2,(y.linlin(-1,1,1,0.01)).linexp(0.01,1,0.01,1) - 0.01),
+			Saw.ar(freq,(x.linlin(-1,1,1,0.01)).linexp(0.01,1,0.01,1) - 0.01),
+			LFTri.ar(freq,0,(x.linlin(-1,1,0.01,1)).linexp(0.01,1,0.01,1) - 0.01)
+		],1,1,0,true) * amp;
+		env = EnvGen.ar(Env.linen(atk,sus,rel,1),1,doneAction:2);
+		sig = sig * env;
+		Out.ar(0,sig)
+}).add;
+)
+
+Array.fill(4,{Synth(\stitchSample,[\freq,rrand(1,10) * 100])})
+
+//Here's a quick and dirty Tdef for removing the last entry of the sample library
+//TODO: This could do with being scaled according to how many patterns are currently in the library,
+(
+Tdef(\sampleCleaner,
+	{ loop ({
+		1.wait;
+		//if the array is empty
+		if(~stitchHistory[0] != nil,
+			{
+
+				~stitchHistory.removeAt(0);
+				"Oldest pattern removed!".postln;
+		});
+	})}
+)
+)
+
+Tdef(\sampleCleaner).play
+
+~stitchHistory.size
+
+~stitchHistory = File("~/src/github/Sampler-Sampler/SuperCollider/savedStitches/stitches_install.~txt".standardizePath,"r").readAllString.interpret
+
+//Let's take another look at this Tdef, and how we're going to make it interesting
+(
+Tdef(\stitch,
+	{ loop ({
+		~loopPattern.(
+			pattern:rrand(0,~stitchHistory.size-1),
+			period:0.1,
+			num:1,
+			delay:1,
+			transform:0,
+			multiplier:1,
+		);
+	})}
+)
+)
+
+//Tdef for sample playback
+//here's a super simple way to make it interesting
+//NOTE: on here, there's actually no controls for sonification.
+//There's a way to sort this now but i'm not actually sure how
+(
+Tdef(\stitch,
+	{ loop ({
+		~loopPattern.(
+			pattern:rrand(0,~stitchHistory.size-1),
+			period:rrand(0.01,2),
+			num:1,
+			delay:rrand(0,10.0),
+			transform:0,
+			multiplier:1,
+		);
+	})}
+)
+)
+
+Tdef(\stitch).play
+
+// Here's an attempt to get the sonification looking and sounding a bit more varied
+
+
+
+//re-defining the envelope time, number of repetitions and the playback time.
+//this is done randomly - seems to actually work quite nicely as it stands
+(
+Tdef(\stitch,
+	{ loop ({
+		var time = rrand(0.01,0.5) / 2, delay = rrand(0,3.0) / 2, repetitions = [1,1,1,1,1,1,2,3,4,5,6].choose, envTime, attack;
+
+		//redefine the envelope time relti
+		envTime = (time * rrand(0.1,2.5));
+		attack = (time * rrand(0.01,0.4));
+
+		//re-define the synthDef with new attack
+		SynthDef(\stitchSample,
+			{
+				arg freq = 100, amp = 1, atk = 0.01, sus = 0, rel = 0.1, x = 0, y = 0;
+				var sig, env;
+				sig = Splay.ar([
+					//a linexp is used here in an attempt to get more wave differentiation
+					//what I really want is quiet in the middle, loud at the edges
+					SinOscFB.ar(freq,1,(y.linlin(-1,1,0.01,1)).linexp(0.01,1,0.01,1) - 0.01),
+					Pulse.ar(freq,0.2,(y.linlin(-1,1,1,0.01)).linexp(0.01,1,0.01,1) - 0.01),
+					Saw.ar(freq,(x.linlin(-1,1,1,0.01)).linexp(0.01,1,0.01,1) - 0.01),
+					LFTri.ar(freq,0,(x.linlin(-1,1,0.01,1)).linexp(0.01,1,0.01,1) - 0.01)
+				],1,1,0,true) * amp;
+				env = EnvGen.ar(Env.linen(attack,sus,envTime,1),1,doneAction:2);
+				sig = sig * env;
+				Out.ar(0,sig)
+		}).add;
+
+		~loopPattern.(
+			pattern:rrand(0,~stitchHistory.size-1),
+			period:time,
+			num:repetitions,
+			delay:delay,
+			transform:0,
+			multiplier:1,
+		);
+	})}
+)
+);
+
+//Second version of sonification - altering pitchess & pitch classes according to the movement of stitches!
+//this uses the 'distance' of a stitch as an octave modifier
+//if this ends up too low for EVERYTHING, then the basePitch needs increasing...
+//THE OCTAVE OF THE DIAGONALS SHOULD BE THE ROUNDED MEDIAN BETWEEN THE TWO VALUES!!!
+//That's a nice way of solving this problem.
+//I did read in the sonification book that longer lengths should mean lower pitches though,
+//and that makes a lot of sense because that's how strings work and resonate.
+(
+//these are set up clockwise
+var up = 0, upright = 1, right = 2, downright = 3, down = 4, downleft = 5, left = 6, upleft = 7, x = 0, y = 0, basePitch = 24, root = 0, diagonalCalc, atk, rel;
+OSCdef(\test,
+	{
+		|msg|
+
+		root = ~root;
+
+
+		//set x and y values according to position on canvas at the start of the stitch. Should be easy enough to do, based on the information sent as a packet from Processing
+		//Xlen, Ylen, gridSize, ID, newX, newY
+		//msg.postln;
+
+		//TODO:
+
+		//YOU NOW NEED TO FIGURE OUT HOW TO TRANSLATE GRID POSITION INTO X/Y AXIS FROM -1 to 1 TO TRANSLATE THEM INTO X AND Y CROSSFADES. DO THIS NOW!
+
+		x = ((msg[5] - msg[1]) / msg[3]).linlin(0,2,-1,1);
+		y = ((msg[6] - msg[2]) / msg[3]).linlin(0,2,-1,1);
+		//("x="+x+"y="+y).postln
+
+		//(msg[1].asString + msg[2].asString).postln;
+
+
+		diagonalCalc.postln;
+
+		//if x = 0
+		if(msg[1] == 0,
+			{
+
+				//DOWN
+				if (msg[2] >= 1,
+					{//("DOWN"+msg[2]+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(down,(basePitch + root).midicps,msg[2] - 1),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+						);
+					}
+				);
+
+				//UP
+				if (msg[2] <= -1,
+					{//("UP"+msg[2].abs+"steps").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(up,(basePitch + root).midicps,msg[2].abs - 1),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+						);
+					}
+				);
+		});
+
+		//if x >= 1
+		if (msg[1] >= 1,
+			{
+				//RIGHT
+				if (msg[2] == 0,
+					{//("RIGHT"+(msg[1])+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(right,(basePitch + root).midicps,msg[1] - 1),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				);
+
+				//DOWNRIGHT
+				if (msg[2] >= 1,
+					{//("DOWNRIGHT"+msg[1]+msg[2]+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(downright,(basePitch + root).midicps,(((msg[1].abs + msg[2].abs)/2).round(1)).abs),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				);
+
+				//UPRIGHT
+				if (msg[2] <= -1,
+					{//("UPRIGHT"+msg[1]+msg[2].abs+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(upright,(basePitch + root).midicps,(((msg[1].abs + msg[2].abs)/2).round(1)).abs),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				)
+		});
+
+		//if x <= -1
+		if (msg[1] <= -1,
+			{
+				//LEFT
+				if (msg[2] == 0,
+					{//("LEFT"+(msg[1].abs)+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(left,(basePitch + root).midicps,msg[1].abs - 1),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				);
+
+				//DOWNLEFT
+				if (msg[2] >= 1,
+					{//("DOWNLEFT"+msg[1]+msg[2]+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(downleft,(basePitch + root).midicps,(((msg[1].abs + msg[2].abs)/2).round(1)).abs),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				);
+
+				//UPLEFT
+				if (msg[2] <= -1,
+					{//("UPLEFT"+msg[1]+msg[2].abs+"STEPS";
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(upleft,(basePitch + root).midicps,(((msg[1].abs + msg[2].abs)/2).round(1)).abs),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				)
+		})
+	},'/sampledStitchInfo'
+)
+);
+
+//Third version of the sonification.
+//This one inverts the scale relationship between octave and length. short stitches have a high pitch and longer stitches have a lower pitch
+//Because strings do this, is my reasoning.
+//variable maxOctave sets the maximum octave that can be played
+//Maybe this needs to be so that the envelope time is set in the OSCdef, rather than outside of it?
+(
+//these are set up clockwise
+var up = 0, upright = 1, right = 2, downright = 3, down = 4, downleft = 5, left = 6, upleft = 7, x = 0, y = 0, basePitch = 24, root = 0, diagonalCalc, maxOctave = 6, attack, release;
+OSCdef(\test,
+	{
+		|msg|
+
+		root = ~root;
+		diagonalCalc = (maxOctave - (((msg[1].abs + msg[2].abs)/2).round(1)).abs) - 1;
+
+		//set x and y values according to position on canvas at the start of the stitch. Should be easy enough to do, based on the information sent as a packet from Processing
+		//Xlen, Ylen, gridSize, ID, newX, newY
+		//msg.postln;
+
+		//TODO:
+
+		//YOU NOW NEED TO FIGURE OUT HOW TO TRANSLATE GRID POSITION INTO X/Y AXIS FROM -1 to 1 TO TRANSLATE THEM INTO X AND Y CROSSFADES. DO THIS NOW!
+
+		x = ((msg[5] - msg[1]) / msg[3]).linlin(0,2,-1,1);
+		y = ((msg[6] - msg[2]) / msg[3]).linlin(0,2,-1,1);
+		//("x="+x+"y="+y).postln
+
+		//(msg[1].asString + msg[2].asString).postln;
+
+
+		diagonalCalc.postln;
+
+		//if x = 0
+		if(msg[1] == 0,
+			{
+
+				//DOWN
+				if (msg[2] >= 1,
+					{//("DOWN"+msg[2]+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(down,(basePitch + root).midicps,maxOctave - (msg[2] - 1)),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+						);
+					}
+				);
+
+				//UP
+				if (msg[2] <= -1,
+					{//("UP"+msg[2].abs+"steps").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(up,(basePitch + root).midicps,maxOctave - (msg[2].abs - 1)),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+						);
+					}
+				);
+		});
+
+		//if x >= 1
+		if (msg[1] >= 1,
+			{
+				//RIGHT
+				if (msg[2] == 0,
+					{//("RIGHT"+(msg[1])+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(right,(basePitch + root).midicps,maxOctave - (msg[1] - 1)),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				);
+
+				//DOWNRIGHT
+				if (msg[2] >= 1,
+					{//("DOWNRIGHT"+msg[1]+msg[2]+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(downright,(basePitch + root).midicps,diagonalCalc),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				);
+
+				//UPRIGHT
+				if (msg[2] <= -1,
+					{//("UPRIGHT"+msg[1]+msg[2].abs+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(upright,(basePitch + root).midicps,diagonalCalc),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				)
+		});
+
+		//if x <= -1
+		if (msg[1] <= -1,
+			{
+				//LEFT
+				if (msg[2] == 0,
+					{//("LEFT"+(msg[1].abs)+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(left,(basePitch + root).midicps,maxOctave - (msg[1].abs - 1)),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				);
+
+				//DOWNLEFT
+				if (msg[2] >= 1,
+					{//("DOWNLEFT"+msg[1]+msg[2]+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(downleft,(basePitch + root).midicps,diagonalCalc),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				);
+
+				//UPLEFT
+				if (msg[2] <= -1,
+					{//("UPLEFT"+msg[1]+msg[2].abs+"STEPS";
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(upleft,(basePitch + root).midicps,diagonalCalc),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+							]
+					);}
+				)
+		})
+	},'/sampledStitchInfo'
+)
+);
+
+
+
+//Fourth version of sonification - this time using global attack and release values which are redefined with the canvas is redrawn
+(
+//these are set up clockwise
+var up = 0, upright = 1, right = 2, downright = 3, down = 4, downleft = 5, left = 6, upleft = 7, x = 0, y = 0, basePitch = 24, root = 0, diagonalCalc, maxOctave = 6, attack, release;
+OSCdef(\test,
+	{
+		|msg|
+
+		//set global variables
+		root = ~root;
+		attack = ~attack;
+		release = ~release;
+		diagonalCalc = (maxOctave - (((msg[1].abs + msg[2].abs)/2).round(1)).abs) - 1;
+
+		//set x and y values according to position on canvas at the start of the stitch. Should be easy enough to do, based on the information sent as a packet from Processing
+		//Xlen, Ylen, gridSize, ID, newX, newY
+		//msg.postln;
+
+		//TODO:
+
+		//YOU NOW NEED TO FIGURE OUT HOW TO TRANSLATE GRID POSITION INTO X/Y AXIS FROM -1 to 1 TO TRANSLATE THEM INTO X AND Y CROSSFADES. DO THIS NOW!
+
+		x = ((msg[5] - msg[1]) / msg[3]).linlin(0,2,-1,1);
+		y = ((msg[6] - msg[2]) / msg[3]).linlin(0,2,-1,1);
+		//("x="+x+"y="+y).postln
+
+		//(msg[1].asString + msg[2].asString).postln;
+
+
+		diagonalCalc.postln;
+
+		//if x = 0
+		if(msg[1] == 0,
+			{
+
+				//DOWN
+				if (msg[2] >= 1,
+					{//("DOWN"+msg[2]+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(down,(basePitch + root).midicps,maxOctave - (msg[2] - 1)),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+								\atk,~attack,
+								\rel,~release,
+							]
+						);
+					}
+				);
+
+				//UP
+				if (msg[2] <= -1,
+					{//("UP"+msg[2].abs+"steps").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(up,(basePitch + root).midicps,maxOctave - (msg[2].abs - 1)),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+								\atk,~attack,
+								\rel,~release,
+							]
+						);
+					}
+				);
+		});
+
+		//if x >= 1
+		if (msg[1] >= 1,
+			{
+				//RIGHT
+				if (msg[2] == 0,
+					{//("RIGHT"+(msg[1])+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(right,(basePitch + root).midicps,maxOctave - (msg[1] - 1)),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+								\atk,~attack,
+								\rel,~release,
+							]
+					);}
+				);
+
+				//DOWNRIGHT
+				if (msg[2] >= 1,
+					{//("DOWNRIGHT"+msg[1]+msg[2]+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(downright,(basePitch + root).midicps,diagonalCalc),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+								\atk,~attack,
+								\rel,~release,
+							]
+					);}
+				);
+
+				//UPRIGHT
+				if (msg[2] <= -1,
+					{//("UPRIGHT"+msg[1]+msg[2].abs+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(upright,(basePitch + root).midicps,diagonalCalc),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+								\atk,~attack,
+								\rel,~release,
+							]
+					);}
+				)
+		});
+
+		//if x <= -1
+		if (msg[1] <= -1,
+			{
+				//LEFT
+				if (msg[2] == 0,
+					{//("LEFT"+(msg[1].abs)+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(left,(basePitch + root).midicps,maxOctave - (msg[1].abs - 1)),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+								\atk,~attack,
+								\rel,~release,
+							]
+					);}
+				);
+
+				//DOWNLEFT
+				if (msg[2] >= 1,
+					{//("DOWNLEFT"+msg[1]+msg[2]+"STEPS").postln;
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(downleft,(basePitch + root).midicps,diagonalCalc),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+								\atk,~attack,
+								\rel,~release,
+							]
+					);}
+				);
+
+				//UPLEFT
+				if (msg[2] <= -1,
+					{//("UPLEFT"+msg[1]+msg[2].abs+"STEPS";
+						Synth(\stitchSample,
+							[
+								\freq,~scale.degreeToFreq(upleft,(basePitch + root).midicps,diagonalCalc),
+								//TODO: handle how this is used.
+								\x,x,
+								\y,y,
+								\atk,~attack,
+								\rel,~release,
+							]
+					);}
+				)
+		})
+	},'/sampledStitchInfo'
+)
+);
+
+
+//so now the properties of the synth don't need to be redefined inside of this Tdef they are defined according to information taken from Processing (Stitch direction and length)
+(
+Tdef(\stitch,
+	{ loop ({
+		var time = rrand(0.01,0.5) / 2, delay = rrand(0,3.0) / 2, repetitions = [1,1,1,1,1,1,2,3,4,5,6].choose, envTime, attack;
+
+		~loopPattern.(
+			pattern:rrand(0,~stitchHistory.size-1),
+			period:time,
+			num:repetitions,
+			delay:delay,
+			transform:0,
+			multiplier:1,
+		);
+	})}
+)
+);
+
+Tdef(\stitch).play
+
+///NOVEMBER 6TH - THE ABOVE FOR A COMPLETE DUO OF SONIFICATION + SEQUENCING
+
+//NOVEMBER 6TH - SECOND ATTEMPT AT SONIFYING STITCH INPUT DATA. THIS IS GOING TO BE A TOTAL OVERHAUL
+
+//This is going to use the scale degrees, to determine pitch, and use the distance of the thread to determine the LPF cutoff frequency
+
+//first the SynthDef
+(
+SynthDef(\clickSound,
+	{
+		arg freq1 = 300, freq2 = 400, lpf = 1000, amp = 0.5, pan = 0, atk = 4, dec = 0.3, sus = 0.5, rel = 1, trig = 1;
+		var sig, env;
+		sig = LPF.ar(Saw.ar(freq1.slew(300,300),1) * SinOsc.ar(freq2.slew(4000,4000),3).unipolar,lpf.slew(500,500),1);
+		env = EnvGen.ar(Env.adsr(atk,dec,sus,rel),trig,doneAction:2);
+		sig = sig * env;
+		Out.ar(0,Pan2.ar(LeakDC.ar(sig),pan,amp * 4));
+}).add;
+);
+
+(
+//NOTE: these will all need to be renamed upClick etc.
+var upClick = 0, uprightClick = 1, rightClick = 2, downrightClick = 3, downClick = 4, downleftClick = 5, leftClick = 6, upleftClick = 7, basePitchClick = 24, rootClick = 0, diagonalCalcClick, maxOctave = 6;
+~fundamental = 50;
+~stitches = Array.newClear(5000);
+
+
+(
+// this sets up a variable for the synth to access
+// the OSCdef controlling how the synth is accessed
+OSCdef(\clicked,
+	{
+		|msg, time, addr, recvPort|
+
+		msg.postln;
+
+		rootClick = ~root;
+
+		//this instantiates the synth
+		~stitches[msg[4]] = Synth.new(\clickSound,[
+			\freq1,(~scale.degreeToFreq(0,(basePitchClick + rootClick).midicps,2)),
+			\freq2,(~scale.degreeToFreq(0,(basePitchClick + rootClick).midicps,2)),
+			\lpf,((msg[1].abs+msg[2].abs) / (msg[3]*2) * (~fundamental*4) + ~fundamental)]);
+},'/mousePressed')
+);
+
+(
+OSCdef(\mouseMoved,
+	{
+		/*
+		message guide
+		1 = x movement
+		2 = y movement
+		3 = gridSize
+		4 = trigID
+		5 = StartX
+		6 = StartY
+
+		TODO: This could do with another two messages for start x and start y to set the initial pitch or another initial characteristic of the synth, so that the stitches appear to 'do' something rather than just being the same note each time on a different part of the canvas
+
+		*/
+		|msg,time,addr,recvPort|
+
+
+		//RIGHT NOW, you need to convert thread DISTANCE into LPF values
+
+		diagonalCalcClick = ((msg[1].abs + msg[2].abs)/2).postln;
+
+		//set properties on previously-enabled synths
+		// this adds a 'starting frequency' to the frequencies used in the sonification
+		//
+		if((msg[1] / msg[3]) == 0,
+			{
+
+				//DOWN
+				if ((msg[2] / msg[3]) >= 1,
+					{//("DOWN"+msg[2]+"STEPS").postln;
+						"here".postln;
+						~stitches[msg[4]].set(
+							\freq1,~scale.degreeToFreq(down,(basePitchClick + rootClick).midicps,2),
+							\freq2,~scale.degreeToFreq(down,(basePitchClick + rootClick).midicps,2) / 2,
+							//todo: scale LPF
+							\lpf,msg[2]
+						);
+					}
+				);
+
+				//UP
+				if ((msg[2] / msg[3]) <= -1,
+					{//("UP"+msg[2].abs+"steps").postln;
+						~stitches[msg[4]].set(
+							\freq1,~scale.degreeToFreq(up,(basePitchClick + rootClick).midicps,2),
+							\freq2,~scale.degreeToFreq(up,(basePitchClick + rootClick).midicps,2) / 2,
+							//todo: scale LPF
+							\lpf,msg[2].abs
+						);
+
+					}
+				);
+		});
+
+
+		if ((msg[1] / msg[3]) >= 1,
+			{
+				//RIGHT
+				if ((msg[2] / msg[3]) == 0,
+					{//("RIGHT"+(msg[1])+"STEPS").postln;
+						~stitches[msg[4]].set(
+							\freq1,~scale.degreeToFreq(right,(basePitchClick + rootClick).midicps,2),
+							\freq2,~scale.degreeToFreq(right,(basePitchClick + rootClick).midicps,2) / 2,
+							//todo: scale LPF
+							\lpf,msg[1].abs
+						);
+					}
+				);
+
+				//DOWNRIGHT
+				if ((msg[2] / msg[3]) >= 1,
+					{//("DOWNRIGHT"+msg[1]+msg[2]+"STEPS").postln;
+						~stitches[msg[4]].set(
+							\freq1,~scale.degreeToFreq(downright,(basePitchClick + rootClick).midicps,2),
+							\freq2,~scale.degreeToFreq(downright,(basePitchClick + rootClick).midicps,2) / 2,
+							//todo: scale LPF
+							\lpf,diagonalCalcClick
+						);
+					}
+				);
+
+				//UPRIGHT
+				if ((msg[2] / msg[3]) <= -1,
+					{//("UPRIGHT"+msg[1]+msg[2].abs+"STEPS").postln;
+						~stitches[msg[4]].set(
+							\freq1,~scale.degreeToFreq(upright,(basePitchClick + rootClick).midicps,2),
+							\freq2,~scale.degreeToFreq(upright,(basePitchClick + rootClick).midicps,2) / 2,
+							//todo: scale LPF
+							\lpf,diagonalCalcClick
+						);
+					}
+				)
+		});
+
+		//if x <= -1
+		if ((msg[1] / msg[3]) <= -1,
+			{
+				//LEFT
+				if ((msg[2] / msg[3]) == 0,
+					{//("LEFT"+(msg[1].abs)+"STEPS").postln;
+						~stitches[msg[4]].set(
+							\freq1,~scale.degreeToFreq(left,(basePitchClick + rootClick).midicps,2),
+							\freq2,~scale.degreeToFreq(left,(basePitchClick + rootClick).midicps,2) / 2,
+							//todo: scale LPF
+							\lpf,msg[1].abs
+						);
+					}
+				);
+
+				//DOWNLEFT
+				if ((msg[2] / msg[3]) >= 1,
+					{//("DOWNLEFT"+msg[1]+msg[2]+"STEPS").postln;
+						~stitches[msg[4]].set(
+							\freq1,~scale.degreeToFreq(downleft,(basePitchClick + rootClick).midicps,2),
+							\freq2,~scale.degreeToFreq(downleft,(basePitchClick + rootClick).midicps,2) / 2,
+							//todo: scale LPF
+							\lpf,diagonalCalcClick
+						);
+
+					}
+				);
+
+				//UPLEFT
+				if ((msg[2] / msg[3]) <= -1,
+					{//("UPLEFT"+msg[1]+msg[2].abs+"STEPS";
+						~stitches[msg[4]].set(
+							\freq1,~scale.degreeToFreq(upleft,(basePitchClick + rootClick).midicps,2),
+							\freq2,~scale.degreeToFreq(upleft,(basePitchClick + rootClick).midicps,2) / 2,
+							//todo: scale LPF
+							\lpf,diagonalCalcClick
+						);
+
+					}
+				)
+		})
+
+},'/mousePosition')
+);
+
+(
+//this takes the number given to the stitch and uses it to terminate the sound once the mouse is released
+OSCdef(\released,
+	{
+		|msg, time, addr, recvPort|
+		~stitches[msg[1]].set(\trig,0);
+		//this kills the synth
+},'/mouseReleased')
+)
+);
