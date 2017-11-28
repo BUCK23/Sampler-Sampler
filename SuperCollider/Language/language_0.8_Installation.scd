@@ -1,7 +1,7 @@
 //Note - all sounds from keyboard are sent to Out 4, all Sampler sounds sent to Out 6, so that they can be run through an effects bus.
 
 (
-~processing = NetAddr.new("127.0.0.1",12000);
+~processing = NetAddr.new("192.168.0.10",12000);
 //initialises a master list (lists are extendable)
 ~stitchHistory = List.new;
 //initialises the first sub-list, for the stitches to be added

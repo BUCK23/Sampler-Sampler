@@ -35,9 +35,9 @@ s.waitForBoot{{
 	(
 		Tdef(\stitch,
 			{ loop ({
-				~loopPattern.(
+				~loopPattern.(cd
 					pattern:0,
-					period:0.5,
+					period:0.01,
 					num:1,
 					delay:5,
 					transform:0,
@@ -83,3 +83,7 @@ s.waitForBoot{{
 	"done".postln;
 }.fork;}
 )
+
+~stitchHistory = ~theFunc.()
+
+~theFunc.()
