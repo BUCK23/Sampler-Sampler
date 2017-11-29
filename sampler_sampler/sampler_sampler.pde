@@ -176,7 +176,9 @@ void undoStitch(int scaler) {
   grid = scaler;
   scale(scaler);
   synchronized(thread.stitches) {
+    if(thread.stitches.size() != 0) {
     thread.stitches.remove(thread.stitches.size() - 1);
+    }
     for (int i = 0; i <= width/grid; i ++) {
       for (int j = 0; j <= height/grid; j ++) {
         noStroke();
